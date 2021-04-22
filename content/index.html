@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="css/index.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="images/扫雷.ico" type="image/x-icon" />
+</head>
+
+<body>
+    <div id="backGround">
+        <h2 id="GameTitle">扫雷</h2>
+        <div class="Explain">
+            <input type="button" id="start" class="jian" value="确定开始" />
+            <input type="button" value="结束本轮" id="end">
+        </div>
+        <div>
+            <b>剩余雷数：<u id="minecount"></u>个,</b>
+            <b>所用时间：<span id="second"></span>秒</b>
+        </div>
+        <div id="popup">
+            <label>级别选择：</label>
+            <input type="radio" id="level_1" checked="checked" value="5" name="level" />
+            <label for="level_1" title="5*5">初级</label>
+            <input type="radio" id="level_2" value="9" name="level" />
+            <label for="level_2" title="9*9">中级</label>
+            <input type="radio" id="level_3" value="13" name="level" />
+            <label for="level_3" title="13*13">高级</label>
+        </div>
+        <table>
+            <tbody id="lattice">
+            </tbody>
+        </table>
+        <div class="zan" id="zan">
+            <h3 title="点我返回" id="you_zuo">扫雷作者</h3>
+            <p>放自己收款码</p>
+            <p>鼠标放在'扫雷作者'上二秒看看</p>
+            <p>QQ</p>
+            <p>微信</p>
+            <p>支付宝</p>
+            <p>放自己收款码</p>
+        </div>
+    </div>
+    <script src="scripts/index.js"></script>
+</body>
+
+</html>
