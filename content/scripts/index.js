@@ -6,9 +6,6 @@ var end = get("end");
 var minecount = get("minecount");
 var second = get("second");
 var backGround = get("backGround");
-var zuo = get("zuo");
-var zan = get("zan");
-var zayou_zuon = get("you_zuo");
 var seconds, minutes, hours;
 var Mine = null; //创建表格
 var t = null;
@@ -335,12 +332,6 @@ function init(row, col, min, max) {
     }
     backGround.oncontextmenu = function() { //右键菜单禁止右击
         return false;
-    }
-    zuo.onclick = function() {
-        zan.style.display = "block";
-    }
-    you_zuo.onclick = function() {
-        zan.style.display = "none";
     }
 }
 init();
