@@ -9,7 +9,7 @@ var backGround = get("backGround");
 var seconds, minutes, hours;
 var Mine = null; //创建表格
 var t = null;
-//定义类
+
 function Sweep(id, rows, cols, min, max) {
     this.id = id; //thead
     this.rows = rows; //行
