@@ -183,10 +183,10 @@ Sweep.prototype = {
                                 }
                                 if (number == 9)
                                 {
+                                    this.iswin = 1;
                                     this.className = "fail";
                                     alert("Lose!");
                                     self.defaults();
-                                    this.iswin = 1;
                                 } else {
                                     self.openNumbercells(row, col, number); //数字
                                 }
@@ -209,9 +209,9 @@ Sweep.prototype = {
             this.openNoNumbercells(i, j);
         }
         if (this.openCells + this.mines == this.rows * this.cols) {
+            this.iswin = 2;
             alert("Victory!");
             this.defaults();
-            this.iswin = 2;
         }
     },
     openNoNumbercells: function(row, col) { //打开自己及周围空格
