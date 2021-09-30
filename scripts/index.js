@@ -248,7 +248,7 @@ Sweep.prototype = {
     datas: function() //打印数据
         {
             try {
-                this.rate = this.winseesion/(this.winseesion+this.loseseesion)/100;
+                this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100;
                 if(isNaN(this.rate))
                     console.log("WinRate Is：0%");
                 else
