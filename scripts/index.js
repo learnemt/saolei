@@ -26,6 +26,9 @@ function Sweep(id, rows, cols, min, max) {
     this.winmark = 0; //红旗插在雷上成功排雷
     this.chacuo = 0; //插错的雷插到数字之类
     this.iswin = 0;//什么都没做
+    this.rate = 0;
+    this.winseesion = 0;
+    this.loseseesion = 0;
 }
 Sweep.prototype = {
     constructor: Sweep,
@@ -184,6 +187,7 @@ Sweep.prototype = {
                                 if (number == 9)
                                 {
                                     this.iswin = 1;
+                                    this.loseseesion++;
                                     this.className = "fail";
                                     alert("Lose!");
                                     self.defaults();
@@ -209,6 +213,7 @@ Sweep.prototype = {
             this.openNoNumbercells(i, j);
         }
         if (this.openCells + this.mines == this.rows * this.cols) {
+            this.winseesion++;
             this.iswin = 2;
             alert("Victory!");
             this.defaults();
@@ -323,6 +328,7 @@ function init(row, col, min, max) {
             }
             second.innerText = hours + "时" + minutes + "分" + seconds;
         }, 1000);
+        console.info(Mine.winseesion/(Mine.winseesion+Mine.loseseesion)*100%)
         console.log(Mine.mines);
         console.log(Mine.cells);
     }
