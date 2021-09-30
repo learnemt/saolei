@@ -187,11 +187,7 @@ Sweep.prototype = {
                                 }
                                 if (number == 9)
                                 {
-                                    this.iswin = 1;
-                                    this.loseseesion++;
-                                    this.className = "fail";
-                                    alert("Lose!");
-                                    self.defaults();
+                                   this.clearing(2,'Lost');
                                 } else {
                                     self.openNumbercells(row, col, number); //数字
                                 }
@@ -214,10 +210,7 @@ Sweep.prototype = {
             this.openNoNumbercells(i, j);
         }
         if (this.openCells + this.mines == this.rows * this.cols) {
-            this.winseesion++;
-            this.iswin = 2;
-            alert("Victory!");
-            this.defaults();
+           this.clearing(2,'Won');
         }
     },
     openNoNumbercells: function(row, col) { //打开自己及周围空格
@@ -240,6 +233,13 @@ Sweep.prototype = {
             }
         }
     },
+    clearing:(iswin = 0,msg = '')=>{
+         this.winseesion++;
+            this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100;
+            this.iswin = iswin;
+            alert(msg);
+            this.defaults();
+    },
     end: function() { //结束就停止
         if (this.onGameOver != null) {
             this.onGameOver();
@@ -248,11 +248,10 @@ Sweep.prototype = {
     datas: function() //打印数据
         {
             try {
-                this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100;
                 if(isNaN(this.rate))
                     console.log("WinRate Is：0%");
                 else
-                    console.log("WinRate Is："+this.rate+"%");
+                    console.log(`WinRate Is：${this.rate}%`);
             } catch (error) {
                 console.log(err);
             }
