@@ -165,7 +165,7 @@ Sweep.prototype = {
                         var td = self.$("mine_" + row + "_" + col);
                         td.onmousedown = function(e) {
                             e = e || window.event;
-                            console.warn(this)
+                            //console.warn(this)
                             if (e.button == 2) { //点右键
                                 if (this.className == "") {
                                     if (self.markMines == self.mines) return;
@@ -248,7 +248,7 @@ Sweep.prototype = {
     datas: function() //打印数据
         {
             try {
-                this.rate = this.winseesion/(this.winseesion+this.loseseesion);
+                this.rate = this.winseesion/(this.winseesion+this.loseseesion)/100;
                 if(isNaN(this.rate))
                     console.log("WinRate Is：0%");
                 else
@@ -259,11 +259,11 @@ Sweep.prototype = {
             if(this.iswin == 2)
                 console.log("恭喜你赢了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
                 "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
-                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标");
+                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了"+this.winseesion+"次，输了"+this.loseseesion+"次");
             else
                 console.log("很遗憾你输了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
                 "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
-                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标");
+                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了"+this.winseesion+"次，输了"+this.loseseesion+"次");
         },
     defaults: function() { //表示成功与失败结果
         this.showAll();
