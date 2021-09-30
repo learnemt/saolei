@@ -261,7 +261,7 @@ Sweep.prototype = {
         this.playing = false; 
         this.end();
         this.datas();
-        this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100%
+        this.rate = this.winseesion/(this.winseesion+this.loseseesion);
     },
     play: function() {
         this.markMines = 0;
