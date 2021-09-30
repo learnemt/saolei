@@ -261,6 +261,7 @@ Sweep.prototype = {
         this.playing = false; 
         this.end();
         this.datas();
+        this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100%
     },
     play: function() {
         this.markMines = 0;
@@ -328,7 +329,7 @@ function init(row, col, min, max) {
             }
             second.innerText = hours + "时" + minutes + "分" + seconds;
         }, 1000);
-        console.info(Mine.winseesion/(Mine.winseesion+Mine.loseseesion)*100%)
+        console.info(Mine.rate)
         console.log(Mine.mines);
         console.log(Mine.cells);
     }
