@@ -165,6 +165,7 @@ Sweep.prototype = {
                         var td = self.$("mine_" + row + "_" + col);
                         td.onmousedown = function(e) {
                             e = e || window.event;
+                            console.warn(this)
                             if (e.button == 2) { //点右键
                                 if (this.className == "") {
                                     if (self.markMines == self.mines) return;
@@ -246,6 +247,8 @@ Sweep.prototype = {
     },
     datas: function() //打印数据
         {
+            this.rate = this.winseesion/(this.winseesion+this.loseseesion);
+            console.log(this.rate);
             if(this.iswin == 2)
                 console.log("恭喜你赢了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
                 "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
@@ -261,7 +264,6 @@ Sweep.prototype = {
         this.playing = false; 
         this.end();
         this.datas();
-        this.rate = this.winseesion/(this.winseesion+this.loseseesion);
     },
     play: function() {
         this.markMines = 0;
@@ -329,7 +331,6 @@ function init(row, col, min, max) {
             }
             second.innerText = hours + "时" + minutes + "分" + seconds;
         }, 1000);
-        console.info(Mine.rate)
         console.log(Mine.mines);
         console.log(Mine.cells);
     }
