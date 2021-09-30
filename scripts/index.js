@@ -25,26 +25,26 @@ function Sweep(id, rows, cols, min, max) {
     this.playing = false; //刚开始是未进行
     this.winmark = 0; //红旗插在雷上成功排雷
     this.chacuo = 0; //插错的雷插到数字之类
+    this.iswin = 0;//什么都没做
 }
-//创建方法
 Sweep.prototype = {
     constructor: Sweep,
     $: function(id) {
         return document.getElementById(id);
     },
-    draw: function() { //画格子
-        var lattices = this.$("lattice"); //thead格子
+    draw: function() {
+        var lattices = this.$("lattice"); 
         var html = "";
         for (var i = 0; i < this.rows; i++) {
             html += "<tr>";
             for (var j = 0; j < this.cols; j++) {
-                html += "<td id = 'mine_" + i + "_" + j + "'></td>"; // id = 'mine_" + i + "_" + j + "'
+                html += "<td id = 'mine_" + i + "_" + j + "'></td>";
             }
             html += "</tr>";
         }
         lattices.innerHTML = html;
     },
-    initcells: function() { //模拟二维数组
+    initcells: function() {
         this.cells = [];
         for (var i = 0; i < this.rows; i++) {
             this.cells.push([]);
@@ -55,7 +55,7 @@ Sweep.prototype = {
         //console.log(this.cells);
     },
 
-    getRandom: function(min, max) { //得到5-8位随机数
+    getRandom: function(min, max) { //得到级别数~8位随机数
         return min + Math.floor(Math.random() * (max - min + 1));
     },
     getIndex(number) { //从随机数获取索引下标
@@ -68,7 +68,7 @@ Sweep.prototype = {
     setMines: function() { //设置地雷
         var tempArr = {};
         for (var i = 0; i < this.mines; i++) {
-            var number = this.getRandom(0, this.rows * this.cols - 1); //从0-24随机5-8个雷
+            var number = this.getRandom(0, this.rows * this.cols - 1);
             //console.log(number + "                     " + tempArr+"   "+i+"   "+ (number in tempArr) );
             if (number in tempArr) {
                 i--;
@@ -116,7 +116,7 @@ Sweep.prototype = {
             }
         }
     },
-    showAll: function(i, j) //显示所有包括雷等等
+    showAll: function(i, j)
         {
             for (var i = 0; i < this.rows; i++) {
                 for (var j = 0; j < this.cols; j++) {
@@ -161,8 +161,7 @@ Sweep.prototype = {
                     (function(row, col) {
                         var td = self.$("mine_" + row + "_" + col);
                         td.onmousedown = function(e) {
-                            e = e || window.event; //event获取事件对象
-                            //console.log(e.button); //查看鼠标code
+                            e = e || window.event;
                             if (e.button == 2) { //点右键
                                 if (this.className == "") {
                                     if (self.markMines == self.mines) return;
@@ -182,11 +181,12 @@ Sweep.prototype = {
                                     alert("已经标了旗，不能左击");
                                     return;
                                 }
-                                if (number == 9) //是雷
+                                if (number == 9)
                                 {
                                     this.className = "fail";
-                                    alert("游戏结束!");
+                                    alert("Lose!");
                                     self.defaults();
+                                    this.iswin = 1;
                                 } else {
                                     self.openNumbercells(row, col, number); //数字
                                 }
@@ -209,8 +209,9 @@ Sweep.prototype = {
             this.openNoNumbercells(i, j);
         }
         if (this.openCells + this.mines == this.rows * this.cols) {
-            alert("gameWin!");
+            alert("Victory!");
             this.defaults();
+            this.iswin = 2;
         }
     },
     openNoNumbercells: function(row, col) { //打开自己及周围空格
@@ -238,35 +239,37 @@ Sweep.prototype = {
             this.onGameOver();
         }
     },
-    datas: function(i, j) //打印数据
+    datas: function() //打印数据
         {
-            console.log("您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
+            if(this.iswin == 2)
+                console.log("恭喜你赢了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
+                "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
+                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标");
+            else
+                console.log("很遗憾你输了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
                 "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
                 this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标");
         },
     defaults: function() { //表示成功与失败结果
         this.showAll();
         this.removeMouse();
-        this.playing = false; //成功与失败都表示结束了 
+        this.playing = false; 
         this.end();
         this.datas();
     },
-    play: function() { //开始按钮点击
+    play: function() {
         this.markMines = 0;
         this.openCells = 0;
         this.hideAll();
         this.initcells();
-        this.playing = true; //点击开始就表示进行
+        this.playing = true; //表示进行
         this.mines = this.getRandom(this.min, this.max);
         this.setMines();
         this.showcount();
         this.mousecellsshow();
         this.end();
-        second.innerText = 0; //开始就归零
+        second.innerText = 0; //归零
     },
-    //integration: function() { //将方法整合一个方法调用
-    //    this.draw();
-    //},
 }
 window.onload = function () {
     var levels = document.getElementsByName("level"); //等级
@@ -303,7 +306,7 @@ function init(row, col, min, max) {
             if (!confirm("本局游戏尚未结束，是否重新开一局?")) {
                 return;
             } else {
-                seconds = minutes = hours = 0; //每次开始就清
+                seconds = minutes = hours = 0; 
             }
         }
         Mine.play();
@@ -330,7 +333,7 @@ function init(row, col, min, max) {
         }
         Mine.defaults();
     }
-    backGround.oncontextmenu = function() { //右键菜单禁止右击
+    backGround.oncontextmenu = function() {
         return false;
     }
 }
