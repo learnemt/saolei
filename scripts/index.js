@@ -6,7 +6,7 @@ var end = get("end");
 var minecount = get("minecount");
 var second = get("second");
 var backGround = get("backGround");
-var seconds, minutes, hours;
+var seconds, minutes, hours,num = 3;
 var Mine = null; //创建表格
 var t = null;
 
@@ -27,8 +27,8 @@ function Sweep(id, rows, cols, min, max) {
     this.chacuo = 0; //插错的雷插到数字之类
     this.iswin = false;//什么都没做
     this.rate = 0;
-    this.winseesion = 0;
-    this.loseseesion = 0;
+    this.winSeesion = 0;
+    this.loseSeesion = 0;
 }
 Sweep.prototype = {
     constructor: Sweep,
@@ -55,7 +55,6 @@ Sweep.prototype = {
                 this.cells[i].push(0);
             }
         }
-        //console.log(this.cells);
     },
 
     getRandom: function (min, max) { //得到级别数~8位随机数
@@ -146,7 +145,7 @@ Sweep.prototype = {
             }
         }
     },
-    hideAll: function () { //隐藏
+    hideAll: function () {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
@@ -181,10 +180,11 @@ Sweep.prototype = {
                         } else if (e.button == 0) {
                             var number = self.cells[row][col];
                             if (this.className == "redFlag") {
-                                alert("已经标了旗，不能左击");
+                                alert("已经标置了旗帜！");
                                 return;
                             }
                             if (number == 9) {
+                                this.className = "fail"
                                 self.winRate(false, 'Lost');
                             } else {
                                 self.openNumbercells(row, col, number); //数字
@@ -231,12 +231,12 @@ Sweep.prototype = {
             }
         }
     },
-    winRate: function (iswin, msg = '') { //打开数字
+    winRate: function (iswin, msg = '') {
         if (iswin)
-            this.winseesion++;
+            this.winSeesion++;
         else
-            this.loseseesion++;
-        this.rate = this.winseesion / (this.winseesion + this.loseseesion) * 100;
+            this.loseSeesion++;
+        this.rate = this.winSeesion / (this.winSeesion + this.loseSeesion) * 100;
         this.iswin = iswin;
         alert(msg);
         this.defaults();
@@ -250,20 +250,20 @@ Sweep.prototype = {
     {
         try {
             if (isNaN(this.rate))
-                console.log("WinRate Is：0%");
+                console.log(`第${this.winSeesion + this.loseSeesion}局，WinRate Is：0%`);
             else
-                console.log(`WinRate Is：${this.rate}%`);
+                console.log(`第${this.winSeesion + this.loseSeesion}局，WinRate Is：${this.rate}%`);
         } catch (error) {
             console.log(error);
         }
         if (this.iswin)
             console.log("恭喜你赢了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
                 "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
-                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了" + this.winseesion + "次，输了" + this.loseseesion + "次");
+                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了" + this.winSeesion + "次，输了" + this.loseSeesion + "次");
         else
             console.log("很遗憾你输了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
                 "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
-                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了" + this.winseesion + "次，输了" + this.loseseesion + "次");
+                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了" + this.winSeesion + "次，输了" + this.loseSeesion + "次");
     },
     defaults: function () { //表示成功与失败结果
         this.showAll();
@@ -341,15 +341,22 @@ function init(row, col, min, max) {
             }
             second.innerText = hours + "时" + minutes + "分" + seconds;
         }, 1000);
-        console.log(Mine.mines);
-        console.log(Mine.cells);
     }
     end.onclick = function () {
         if (!Mine.playing) {
             alert("游戏还未开始呢！");
             return;
         }
-        Mine.defaults();
+        else {
+            if (num == 0)
+                return;
+            else {
+                num--;
+            }
+                
+            Mine.defaults();
+        }
+            
     }
     backGround.oncontextmenu = function () {
         return false;
