@@ -272,6 +272,12 @@ Sweep.prototype = {
         this.end();
         this.datas();
     },
+    threeDefault: function () {
+        this.showAll();
+        this.removeMouse();
+        this.playing = false;
+        this.end();
+    },
     play: function () {
         this.markMines = 0;
         this.openCells = 0;
@@ -353,8 +359,7 @@ function init(row, col, min, max) {
             else {
                 num--;
             }
-                
-            Mine.defaults();
+            Mine.threeDefault();
         }
             
     }
