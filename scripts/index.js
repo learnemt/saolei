@@ -187,7 +187,7 @@ Sweep.prototype = {
                                 }
                                 if (number == 9)
                                 {
-                                   this.clearing(2,'Lost');
+                                   this.rate(2,'Lost');
                                 } else {
                                     self.openNumbercells(row, col, number); //数字
                                 }
@@ -210,7 +210,7 @@ Sweep.prototype = {
             this.openNoNumbercells(i, j);
         }
         if (this.openCells + this.mines == this.rows * this.cols) {
-           this.clearing(2,'Won');
+           this.rate(2,'Won');
         }
     },
     openNoNumbercells: function(row, col) { //打开自己及周围空格
@@ -233,7 +233,7 @@ Sweep.prototype = {
             }
         }
     },
-    clearing: function(iswin = 0,msg = '') { //打开数字
+    rate: function(iswin = 0,msg = '') { //打开数字
         this.winseesion++;
         this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100;
         this.iswin = iswin;
