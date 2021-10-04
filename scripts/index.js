@@ -233,12 +233,12 @@ Sweep.prototype = {
             }
         }
     },
-    clearing: function(iswin = 0,msg = ''){
-         this.winseesion++;
-            this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100;
-            this.iswin = iswin;
-            alert(msg);
-            this.defaults();
+    clearing: function(iswin = 0,msg = '') { //打开数字
+        this.winseesion++;
+        this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100;
+        this.iswin = iswin;
+        alert(msg);
+        this.defaults();
     },
     end: function() { //结束就停止
         if (this.onGameOver != null) {
