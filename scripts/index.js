@@ -187,7 +187,7 @@ Sweep.prototype = {
                                 }
                                 if (number == 9)
                                 {
-                                   this.rate(2,'Lost');
+                                    self.Winrate(1,'Lost',this.loseseesion);
                                 } else {
                                     self.openNumbercells(row, col, number); //数字
                                 }
@@ -210,7 +210,7 @@ Sweep.prototype = {
             this.openNoNumbercells(i, j);
         }
         if (this.openCells + this.mines == this.rows * this.cols) {
-           this.rate(2,'Won');
+           this.Winrate(2,'Won',this.winseesion);
         }
     },
     openNoNumbercells: function(row, col) { //打开自己及周围空格
@@ -233,42 +233,42 @@ Sweep.prototype = {
             }
         }
     },
-    rate: function(iswin = 0,msg = '') { //打开数字
-        this.winseesion++;
-        this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100;
-        this.iswin = iswin;
-        alert(msg);
-        this.defaults();
-    },
     end: function() { //结束就停止
         if (this.onGameOver != null) {
             this.onGameOver();
         }
     },
-    datas: function() //打印数据
-        {
-            try {
-                if(isNaN(this.rate))
-                    console.log("WinRate Is：0%");
-                else
-                    console.log(`WinRate Is：${this.rate}%`);
-            } catch (error) {
-                console.log(error);
-            }
-            if(this.iswin == 2)
-                console.log("恭喜你赢了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
-                "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
-                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了"+this.winseesion+"次，输了"+this.loseseesion+"次");
-            else
-                console.log("很遗憾你输了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
-                "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
-                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了"+this.winseesion+"次，输了"+this.loseseesion+"次");
-        },
     defaults: function() { //表示成功与失败结果
         this.showAll();
         this.removeMouse();
         this.playing = false; 
         this.end();
+    },
+    datas: function() //打印数据
+    {
+        try {
+            if(isNaN(this.rate))
+                console.log("WinRate Is：0%");
+            else
+                console.log(`WinRate Is：${this.rate}%`);
+        } catch (error) {
+            console.log(error);
+        }
+        if(this.iswin == 2)
+            console.log("恭喜你赢了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
+            "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
+            this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了"+this.winseesion+"次，输了"+this.loseseesion+"次");
+        else
+            console.log("很遗憾你输了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
+            "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
+            this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了"+this.winseesion+"次，输了"+this.loseseesion+"次");
+    },
+    Winrate: function(iswin = 0,msg = '',seesion) { //打开数字
+        seesion++;
+        this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100;
+        this.iswin = iswin;
+        alert(msg);
+        this.defaults();
         this.datas();
     },
     play: function() {
@@ -287,20 +287,24 @@ Sweep.prototype = {
 }
 window.onload = function () {
     var levels = document.getElementsByName("level"); //等级
-    for (var k = 0; k < levels.length; k++) {
-        levels[k].onclick = function() {
-            if (Mine && Mine.playing) {
-                alert("游戏还在进行，不能切换！");
-                return false;
+    if(levels[0].checked == true){
+        init(5, 5, 5, 8);
+    }
+    else{
+        for (var k = 0; k < levels.length; k++) {
+            levels[k].onclick = function() {
+                if (Mine && Mine.playing) {
+                    alert("游戏还在进行，不能切换！");
+                    return false;
+                }
+                minecount.innerHTML = "0";
+                var levelValue = parseInt(this.value);
+                var min = levelValue;
+                var max = min + Math.ceil((min * min * 0.1));
+                init(levelValue, levelValue, min, max);
             }
-            minecount.innerHTML = "0";
-            var levelValue = parseInt(this.value);
-            var min = levelValue;
-            var max = min + Math.ceil((min * min * 0.1));
-            init(levelValue, levelValue, min, max);
         }
     }
-    init(5, 5, 5, 8);
 }
 
 function init(row, col, min, max) {
@@ -351,4 +355,3 @@ function init(row, col, min, max) {
         return false;
     }
 }
-init();
