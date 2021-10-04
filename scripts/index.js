@@ -233,7 +233,7 @@ Sweep.prototype = {
             }
         }
     },
-    clearing:(iswin = 0,msg = '')=>{
+    clearing: function(iswin = 0,msg = ''){
          this.winseesion++;
             this.rate = this.winseesion/(this.winseesion+this.loseseesion)*100;
             this.iswin = iswin;
@@ -253,7 +253,7 @@ Sweep.prototype = {
                 else
                     console.log(`WinRate Is：${this.rate}%`);
             } catch (error) {
-                console.log(err);
+                console.log(error);
             }
             if(this.iswin == 2)
                 console.log("恭喜你赢了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
