@@ -1,13 +1,14 @@
 function get(id) {
     return document.getElementById(id);
 }
+var js = get("djjs");
 var start = get("start");
 var end = get("end");
 var minecount = get("minecount");
 var second = get("second");
 var backGround = get("backGround");
 var seconds, minutes, hours,num = 3;
-var Mine = null; //创建表格
+var Mine = null; 
 var t = null;
 
 function Sweep(id, rows, cols, min, max) {
@@ -25,7 +26,7 @@ function Sweep(id, rows, cols, min, max) {
     this.playing = false; //刚开始是未进行
     this.winmark = 0; //红旗插在雷上成功排雷
     this.chacuo = 0; //插错的雷插到数字之类
-    this.iswin = false;//什么都没做
+    this.iswin = false;//赢了没
     this.rate = 0;
     this.winSeesion = 0;
     this.loseSeesion = 0;
@@ -47,7 +48,7 @@ Sweep.prototype = {
         }
         lattices.innerHTML = html;
     },
-    initcells: function () {
+    initCells: function () {
         this.cells = [];
         for (var i = 0; i < this.rows; i++) {
             this.cells.push([]);
@@ -56,7 +57,6 @@ Sweep.prototype = {
             }
         }
     },
-
     getRandom: function (min, max) { //得到级别数~8位随机数
         return min + Math.floor(Math.random() * (max - min + 1));
     },
@@ -66,7 +66,6 @@ Sweep.prototype = {
             col: number % this.cols
         }
     },
-
     setMines: function () { //设置地雷
         var tempArr = {};
         for (var i = 0; i < this.mines; i++) {
@@ -81,7 +80,7 @@ Sweep.prototype = {
             }
         }
     },
-    showcount: function () { //给9周围添加数字
+    showCount: function () { //给9周围添加数字
         //console.log(this.cells);
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
@@ -154,7 +153,7 @@ Sweep.prototype = {
             }
         }
     },
-    mousecellsshow: function () //在这可以点格子判断
+    mouseCellsShow: function ()
     {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
@@ -236,7 +235,7 @@ Sweep.prototype = {
             this.winSeesion++;
         else
             this.loseSeesion++;
-        this.rate = this.winSeesion / (this.winSeesion + this.loseSeesion) * 100;
+        this.rate = Math.floor(this.winSeesion / (this.winSeesion + this.loseSeesion) * 100);
         this.iswin = iswin;
         alert(msg);
         this.defaults();
@@ -271,59 +270,61 @@ Sweep.prototype = {
         this.playing = false;
         this.end();
         this.datas();
+        this.winRateNode();
     },
-    threeDefault: function () {
+    threeDefault: function () { //表示成功与失败结果
         this.showAll();
         this.removeMouse();
         this.playing = false;
         this.end();
     },
+    myfunction() {
+        console.log("Of Course");
+    },
+    winRateNode: function () {
+        js.innerHTML = '';
+        let template1 = `<p>进行了<s>${this.winSeesion + this.loseSeesion}</s>局,胜率为<s>${this.rate}</s>%</p>`;
+        let template2 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b>${this.rate}</b>%</p>`;
+        if (this.rate < 60)
+            js.innerHTML += template1
+        else
+            js.innerHTML += template2
+
+    },
     play: function () {
         this.markMines = 0;
         this.openCells = 0;
         this.hideAll();
-        this.initcells();
+        this.initCells();
         this.playing = true; //表示进行
         this.mines = this.getRandom(this.min, this.max);
         this.setMines();
-        this.showcount();
-        this.mousecellsshow();
+        this.showCount();
+        this.mouseCellsShow();
         this.end();
         second.innerText = 0; //归零
-    },
+    }
 }
-window.onload = function () {
-    var levels = document.getElementsByName("level"); //等级
-        init(5, 5, 5, 8);
-        for (var k = 0; k < levels.length; k++) {
-            levels[k].onclick = function () {
-                if (Mine && Mine.playing) {
-                    alert("游戏还在进行，不能切换！");
-                    return false;
-                }
-                minecount.innerHTML = "0";
-                var levelValue = parseInt(this.value);
-                var min = levelValue;
-                var max = min + Math.ceil((min * min * 0.1));
-                if (isNaN(levelValue) || isNaN(max))
-                    init(5, 5, 5, 8);
-                else
-                    init(levelValue, levelValue, min, max);
-            }
-        }
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i].trim();
+        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+    }
+    return "";
 }
-
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
 function init(row, col, min, max) {
     Mine = new Sweep("lattices", row, col, min, max);
     Mine.draw();
     minecount.innerText = "0";
     second.innerText = "0";
-    Mine.onmarkMine = function (count) {
-        minecount.innerText = count;
-    }
-    Mine.onGameOver = function () {
-        clearInterval(t);
-    }
     start.onclick = function () {
         seconds = minutes = hours = 0;
         if (Mine.playing) {
@@ -334,18 +335,23 @@ function init(row, col, min, max) {
             }
         }
         Mine.play();
-        minecount.innerHTML = Mine.mines;
+        minecount.innerText = Mine.mines;
         t = setInterval(function () {
             seconds++;
             if (seconds >= 60) {
                 seconds = 0;
-                minutes += 1;
+                minutes += 1;    
             }
             if (minutes >= 60) {
                 minutes = 0;
                 hours += 1;
             }
-            second.innerText = hours + "时" + minutes + "分" + seconds;
+            if (minutes > 0)
+                second.innerText = minutes + "分" + seconds;
+            else if (hours > 0)
+                second.innerText = hours + "时" + minutes + "分" + seconds;
+            else
+                second.innerText = seconds;
         }, 1000);
     }
     end.onclick = function () {
@@ -361,9 +367,37 @@ function init(row, col, min, max) {
             }
             Mine.threeDefault();
         }
-            
+    }
+    Mine.onmarkMine = function (count) {
+        minecount.innerText = count;
+    }
+    Mine.onGameOver = function () {
+        clearInterval(t);
     }
     backGround.oncontextmenu = function () {
         return false;
+    }
+}
+window.onload = function () {
+    let levels = document.getElementsByName("level"); //等级
+    init(5, 5, 5, 8);
+    let today = new Date().toLocaleString();
+    if (getCookie("You") == "") setCookie("You", today, 0.36)
+    alert(getCookie("You")+"这段时间你来玩过..")
+    for (var k = 0; k < levels.length; k++) {
+        levels[k].onclick = function () {
+            if (Mine && Mine.playing) {
+                alert("游戏还在进行，不能切换！");
+                return false;
+            }
+            minecount.innerHTML = "0";
+            var levelValue = parseInt(this.value);
+            var min = levelValue;
+            var max = min + Math.ceil((min * min * 0.1));
+            if (isNaN(levelValue) || isNaN(max))
+                init(5, 5, 5, 8);
+            else
+                init(levelValue, levelValue, min, max);
+        }
     }
 }
