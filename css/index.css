@@ -18,7 +18,15 @@
     padding: 20px 0 20px 28px;
     background: url(../images/扫雷.png) no-repeat 187px;
 }
-
+#tcc{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(51, 51, 51, 0.6);
+    display: none;
+    color: white;
+}
 .thickness {
     /*文字粗细*/
     font-weight: 600;
@@ -44,31 +52,6 @@ td {
     width: 30px;
     height: 30px;
     border: 1px outset #aaa;
-    cursor: pointer;
-}
-
-#backGround .new {
-    display: inline-block;
-}
-
-#backGround .zan {
-    /*  height: 220px;
-    width: 406px;
-    position: absolute;
-    z-index: 10;
-    top: 145px;
-    left: 25px;
-    border: 1px solid red; */
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgb(51, 51, 51, 0.6);
-    display: none;
-    color: white;
-}
-
-#backGround .zan h3 {
     cursor: pointer;
 }
 
