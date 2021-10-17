@@ -117,10 +117,13 @@ Sweep.prototype = {
             }
         }
     },
-    showAll: function (i, j) {
+    showAll: function () {
+        let color = ["green","orange","blue","pink"]
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
+                console.log(Math.floor(Math.random()*4));
+                td.style.backgroundColor = color[Math.floor(Math.random()*4)];
                 var cell = this.cells[i][j];
                 if (cell == 9) {
                     if (td.className == "redFlag") {
@@ -131,16 +134,19 @@ Sweep.prototype = {
                     } else {
                         td.className = "mine";
                     }
-                } else {
-                    if (cell != 0)
-                        td.innerText = cell;
-                    if (td.className == "redFlag") {
-                        td.className = "flagError";
-                        this.chacuo++;
-                    } else {
-                        td.className = "number";
-                    }
                 }
+                else{
+                    if(!this.$("islei").checked){
+                        if (cell != 0)
+                            td.innerText = cell;
+                        if (td.className == "redFlag") {
+                            td.className = "flagError";
+                            this.chacuo++;
+                        } else {
+                            td.className = "number";
+                        }
+                    } 
+                }  
             }
         }
     },
@@ -148,7 +154,7 @@ Sweep.prototype = {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
-                td.className = "";
+	            td.className = "";
                 td.innerText = "";
             }
         }
@@ -163,7 +169,7 @@ Sweep.prototype = {
                     td.onmousedown = function (e) {
                         e = e || window.event;
                         //console.warn(this)
-                        if (e.button == 2) { //点右键
+                        if (e.button == 2) { 
                             if (this.className == "") {
                                 if (self.markMines == self.mines) return;
                                 this.className = "redFlag";
@@ -196,7 +202,7 @@ Sweep.prototype = {
             }
         }
     },
-    openNumbercells: function (i, j, number) { //打开数字
+    openNumbercells: function (i, j, number) {
         var td = this.$("mine_" + i + "_" + j);
         td.onmousedown = null;
         this.openCells++;
@@ -222,7 +228,7 @@ Sweep.prototype = {
             }
         }
     },
-    removeMouse: function () { //移除事件
+    removeMouse: function () {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
@@ -240,12 +246,12 @@ Sweep.prototype = {
         alert(msg);
         this.defaults();
     },
-    end: function () { //结束就停止
+    end: function () {
         if (this.onGameOver != null) {
             this.onGameOver();
         }
     },
-    datas: function () //打印数据
+    datas: function ()
     {
         try {
             if (isNaN(this.rate))
@@ -264,7 +270,7 @@ Sweep.prototype = {
                 "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
                 this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了" + this.winSeesion + "次，输了" + this.loseSeesion + "次");
     },
-    defaults: function () { //表示成功与失败结果
+    defaults: function () {
         this.showAll();
         this.removeMouse();
         this.playing = false;
@@ -272,14 +278,11 @@ Sweep.prototype = {
         this.datas();
         this.winRateNode();
     },
-    threeDefault: function () { //表示成功与失败结果
+    thrid: function () {
         this.showAll();
         this.removeMouse();
         this.playing = false;
         this.end();
-    },
-    myfunction() {
-        console.log("Of Course");
     },
     winRateNode: function () {
         js.innerHTML = '';
@@ -302,7 +305,7 @@ Sweep.prototype = {
         this.showCount();
         this.mouseCellsShow();
         this.end();
-        second.innerText = 0; //归零
+        second.innerText = 0;
     }
 }
 function getCookie(cname) {
@@ -326,33 +329,35 @@ function init(row, col, min, max) {
     minecount.innerText = "0";
     second.innerText = "0";
     start.onclick = function () {
-        seconds = minutes = hours = 0;
-        if (Mine.playing) {
-            if (!confirm("本局游戏尚未结束，是否重新开一局?")) {
-                return;
-            } else {
-                seconds = minutes = hours = 0;
+        if(Mine.openCells>0 && Mine.playing) return;
+        else{
+            if (Mine.playing) {
+                if (!confirm("本局游戏尚未结束，是否重新开一局?")) {
+                    return;
+                }
             }
-        }
-        Mine.play();
-        minecount.innerText = Mine.mines;
-        t = setInterval(function () {
+            seconds = minutes = hours = 0;
+            Mine.play();
+            minecount.innerText = Mine.mines;
+            t = setInterval(function () {
+            /*second.innerText  =(parseFloat(second.innerText )+ 0.1).toFixed(1)*/
             seconds++;
-            if (seconds >= 60) {
-                seconds = 0;
-                minutes += 1;    
-            }
-            if (minutes >= 60) {
-                minutes = 0;
-                hours += 1;
-            }
-            if (minutes > 0)
-                second.innerText = minutes + "分" + seconds;
-            else if (hours > 0)
-                second.innerText = hours + "时" + minutes + "分" + seconds;
-            else
-                second.innerText = seconds;
-        }, 1000);
+                if (seconds >= 60) {
+                    seconds = 0;
+                    minutes += 1;    
+                }
+                if (minutes >= 60) {
+                    minutes = 0;
+                    hours += 1;
+                }
+                if (minutes > 0)
+                    second.innerText = minutes + "M" + seconds;
+                else if (hours > 0)
+                    second.innerText = hours + "H" + minutes + "M" + seconds;
+                else
+                    second.innerText = seconds;
+            }, 1000);
+        }
     }
     end.onclick = function () {
         if (!Mine.playing) {
@@ -361,11 +366,14 @@ function init(row, col, min, max) {
         }
         else {
             if (num == 0)
+            {
+                alert("没有机会了，"+num+"次");
                 return;
+            }
             else {
                 num--;
             }
-            Mine.threeDefault();
+            Mine.thrid();
         }
     }
     Mine.onmarkMine = function (count) {
@@ -374,17 +382,15 @@ function init(row, col, min, max) {
     Mine.onGameOver = function () {
         clearInterval(t);
     }
-    backGround.oncontextmenu = function () {
-        return false;
-    }
+   
 }
 window.onload = function () {
     let levels = document.getElementsByName("level"); //等级
-    init(5, 5, 5, 8);
     let today = new Date().toLocaleString();
     if (getCookie("You") == "") setCookie("You", today, 0.36)
-    alert(getCookie("You")+"这段时间你来玩过..")
+    alert(getCookie("You") + "这段时间你来玩过..")
     for (var k = 0; k < levels.length; k++) {
+        levels[1].click();
         levels[k].onclick = function () {
             if (Mine && Mine.playing) {
                 alert("游戏还在进行，不能切换！");
@@ -399,5 +405,8 @@ window.onload = function () {
             else
                 init(levelValue, levelValue, min, max);
         }
+    }
+    backGround.oncontextmenu = () => {
+        return false;
     }
 }
