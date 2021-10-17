@@ -387,7 +387,7 @@ window.onload = function () {
     if (getCookie("You") == "") setCookie("You", today, 0.36)
     alert(getCookie("You") + "这段时间你来玩过..")
     for (var k = 0; k < levels.length; k++) {
-        levels[1].click();
+        levels[0].click();
         levels[k].onclick = function () {
             if (Mine && Mine.playing) {
                 alert("游戏还在进行，不能切换！");
