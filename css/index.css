@@ -6,7 +6,6 @@
 }
 
 #backGround {
-    /*灰色背景*/
     width: 456px;
     margin: 0 auto;
     text-align: center;
@@ -14,7 +13,6 @@
     background-color: #E6E7E8;
 }
 #GameTitle {
-    /*游戏标题*/
     padding: 20px 0 20px 28px;
     background: url(../images/扫雷.png) no-repeat 187px;
 }
@@ -28,7 +26,6 @@
     color: white;
 }
 .thickness {
-    /*文字粗细*/
     font-weight: 600;
     padding-left: 10px;
 }
@@ -38,7 +35,6 @@
 }
 
 #popup {
-    /*Popup*/
     background: #E6E7E8;
     box-shadow: 0px 15px 10px -15px #ccc;
 }
@@ -70,12 +66,12 @@ td {
 
 #lattice td.mine {
     background: url(../images/mine.png) no-repeat center;
-    border: 1px solid blue;
+ /* border: 1px solid blue; */
 }
 
 #lattice td.mine2 {
     background: url(../images/mine2.png) no-repeat center;
-    border: 1px solid red;
+    background-color:#500c0c;
 }
 
 #lattice td.redFlag {
