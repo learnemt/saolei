@@ -118,12 +118,9 @@ Sweep.prototype = {
         }
     },
     showAll: function () {
-        let color = ["green","orange","blue","pink"]
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
-                console.log(Math.floor(Math.random()*4));
-                td.style.backgroundColor = color[Math.floor(Math.random()*4)];
                 var cell = this.cells[i][j];
                 if (cell == 9) {
                     if (td.className == "redFlag") {
