@@ -2,6 +2,8 @@ function get(id) {
     return document.getElementById(id);
 }
 var js = get("djjs");
+var xxk = get("zuo");
+var tcc = get("zan");
 var start = get("start");
 var end = get("end");
 var minecount = get("minecount");
@@ -10,7 +12,9 @@ var backGround = get("backGround");
 var seconds, minutes, hours,num = 3;
 var Mine = null; 
 var t = null;
-
+var set = get("set");
+sv = set.options[set.selectedIndex].value;
+console.log(sv);
 function Sweep(id, rows, cols, min, max) {
     this.id = id; //thead
     this.rows = rows; //行
@@ -57,7 +61,7 @@ Sweep.prototype = {
             }
         }
     },
-    getRandom: function (min, max) { //得到级别数~8位随机数
+    getRandom: function (min, max) { //得到级别数~max位随机数
         return min + Math.floor(Math.random() * (max - min + 1));
     },
     getIndex(number) { //从随机数获取索引下标
@@ -70,7 +74,6 @@ Sweep.prototype = {
         var tempArr = {};
         for (var i = 0; i < this.mines; i++) {
             var number = this.getRandom(0, this.rows * this.cols - 1);
-            //console.log(number + "                     " + tempArr+"   "+i+"   "+ (number in tempArr) );
             if (number in tempArr) {
                 i--;
             } else {
@@ -80,8 +83,7 @@ Sweep.prototype = {
             }
         }
     },
-    showCount: function () { //给9周围添加数字
-        //console.log(this.cells);
+    showCount: function () {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var number = 0
@@ -133,7 +135,7 @@ Sweep.prototype = {
                     }
                 }
                 else{
-                    if(!this.$("islei").checked){
+                    if(sv == 1){
                         if (cell != 0)
                             td.innerText = cell;
                         if (td.className == "redFlag") {
@@ -166,7 +168,7 @@ Sweep.prototype = {
                     td.onmousedown = function (e) {
                         e = e || window.event;
                         //console.warn(this)
-                        if (e.button == 2) { 
+                        if (e.button == 2) { //点右键
                             if (this.className == "") {
                                 if (self.markMines == self.mines) return;
                                 this.className = "redFlag";
@@ -325,13 +327,21 @@ function init(row, col, min, max) {
     Mine.draw();
     minecount.innerText = "0";
     second.innerText = "0";
+    xxk.onclick = () => {
+        tcc.style.display = "block";
+        setTimeout(function () {
+            tcc.style.display = "none";
+        },1000)
+    }
     start.onclick = function () {
         if(Mine.openCells>0 && Mine.playing) return;
         else{
             if (Mine.playing) {
                 if (!confirm("本局游戏尚未结束，是否重新开一局?")) {
                     return;
-                }
+                }// } else {
+                //     seconds = minutes = hours = 0;
+                // }
             }
             seconds = minutes = hours = 0;
             Mine.play();
@@ -348,9 +358,9 @@ function init(row, col, min, max) {
                     hours += 1;
                 }
                 if (minutes > 0)
-                    second.innerText = minutes + "M" + seconds;
+                    second.innerText = minutes + "m" + seconds;
                 else if (hours > 0)
-                    second.innerText = hours + "H" + minutes + "M" + seconds;
+                    second.innerText = hours + "h" + minutes + "m" + seconds;
                 else
                     second.innerText = seconds;
             }, 1000);
@@ -373,6 +383,9 @@ function init(row, col, min, max) {
             Mine.thrid();
         }
     }
+    set.onchange = function(){
+        sv =set.options[set.selectedIndex].value;
+    }
     Mine.onmarkMine = function (count) {
         minecount.innerText = count;
     }
@@ -383,9 +396,9 @@ function init(row, col, min, max) {
 }
 window.onload = function () {
     let levels = document.getElementsByName("level"); //等级
-    let today = new Date().toLocaleString();
+    /*let today = new Date().toLocaleString();
     if (getCookie("You") == "") setCookie("You", today, 0.36)
-    alert(getCookie("You") + "这段时间你来玩过..")
+    alert(getCookie("You") + "这段时间你来玩过..")*/
     for (var k = 0; k < levels.length; k++) {
         levels[0].click();
         levels[k].onclick = function () {
