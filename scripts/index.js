@@ -327,12 +327,6 @@ function init(row, col, min, max) {
     Mine.draw();
     minecount.innerText = "0";
     second.innerText = "0";
-    xxk.onclick = () => {
-        tcc.style.display = "block";
-        setTimeout(function () {
-            tcc.style.display = "none";
-        },1000)
-    }
     start.onclick = function () {
         if(Mine.openCells>0 && Mine.playing) return;
         else{
