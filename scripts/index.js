@@ -320,7 +320,7 @@ function init(row, col, min, max) {
             Mine.play();
             minecount.innerText = Mine.mines;
             t = setInterval(function () {
-            second.innerText  =(parseFloat(second.innerText )+ 0.1).toFixed(1)
+            //second.innerText  =(parseFloat(second.innerText )+ 0.1).toFixed(1)
             seconds++;
                 if (seconds >= 60) {
                     seconds = 0;
