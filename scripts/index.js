@@ -1,36 +1,33 @@
 function get(id) {
     return document.getElementById(id);
 }
-var js = get("djjs");
-var xxk = get("zuo");
-var tcc = get("zan");
-var start = get("start");
-var end = get("end");
-var minecount = get("minecount");
-var second = get("second");
-var backGround = get("backGround");
-var seconds, minutes, hours,num = 3;
-var Mine = null; 
-var t = null;
-var set = get("set");
+var ds = get("djsl"),
+start = get("start"),
+end = get("end"),
+minecount = get("minecount"),
+second = get("second"),
+backGround = get("backGround"),
+set = get("set"),
+seconds, minutes, hours,num = 3,
+Mine = null,
+t = null;
 sv = set.options[set.selectedIndex].value;
-console.log(sv);
 function Sweep(id, rows, cols, min, max) {
-    this.id = id; //thead
-    this.rows = rows; //行
-    this.cols = cols; //列
-    this.cells = null //格子
+    this.id = id;
+    this.rows = rows;
+    this.cols = cols;
+    this.cells = null;
     this.min = min;
     this.max = max;
-    this.mines = 0; //随机总雷数
+    this.mines = 0; //雷数
     this.markMines = 0; //标记雷数
-    this.onmarkMine = null; //标记地雷操作的回调函数
     this.openCells = 0; //成功打开格子数
+    this.onmarkMine = null; //标记地雷操作的回调函数
     this.onGameOver = null; //准备游戏结束时的回调函数
-    this.playing = false; //刚开始是未进行
-    this.winmark = 0; //红旗插在雷上成功排雷
-    this.chacuo = 0; //插错的雷插到数字之类
-    this.iswin = false;//赢了没
+    this.playing = false; //未进行
+    this.winmark = 0; //🚩成功排雷
+    this.chacuo = 0; //🚩失败排雷
+    this.iswin = false;
     this.rate = 0;
     this.winSeesion = 0;
     this.loseSeesion = 0;
@@ -78,8 +75,8 @@ Sweep.prototype = {
                 i--;
             } else {
                 tempArr[number] = number;
-                var coordinate = this.getIndex(number); //坐标
-                this.cells[coordinate.row][coordinate.col] = 9; //这个格子行列
+                var coordinate = this.getIndex(number);
+                this.cells[coordinate.row][coordinate.col] = 9;
             }
         }
     },
@@ -135,7 +132,7 @@ Sweep.prototype = {
                     }
                 }
                 else{
-                    if(sv == 1){
+                    if(sv == 0){
                         if (cell != 0)
                             td.innerText = cell;
                         if (td.className == "redFlag") {
@@ -191,7 +188,7 @@ Sweep.prototype = {
                                 this.className = "fail"
                                 self.winRate(false, 'Lost');
                             } else {
-                                self.openNumbercells(row, col, number); //数字
+                                self.openNumbercells(row, col, number);
                             }
                         } else {
                             alert("你点到滚轮了!");
@@ -284,21 +281,20 @@ Sweep.prototype = {
         this.end();
     },
     winRateNode: function () {
-        js.innerHTML = '';
-        let template1 = `<p>进行了<s>${this.winSeesion + this.loseSeesion}</s>局,胜率为<s>${this.rate}</s>%</p>`;
-        let template2 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b>${this.rate}</b>%</p>`;
+        ds.innerHTML = '';
+        let template1 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color='red'">${this.rate}</b>%</p>`;
+        let template2 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color='green'">${this.rate}</b>%</p>`;
         if (this.rate < 60)
-            js.innerHTML += template1
+            ds.innerHTML += template1
         else
-            js.innerHTML += template2
-
+            ds.innerHTML += template2
     },
     play: function () {
         this.markMines = 0;
         this.openCells = 0;
         this.hideAll();
         this.initCells();
-        this.playing = true; //表示进行
+        this.playing = true; //进行
         this.mines = this.getRandom(this.min, this.max);
         this.setMines();
         this.showCount();
@@ -306,21 +302,6 @@ Sweep.prototype = {
         this.end();
         second.innerText = 0;
     }
-}
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i].trim();
-        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
-    }
-    return "";
-}
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires=" + d.toGMTString();
-    document.cookie = cname + "=" + cvalue + "; " + expires;
 }
 function init(row, col, min, max) {
     Mine = new Sweep("lattices", row, col, min, max);
@@ -333,15 +314,13 @@ function init(row, col, min, max) {
             if (Mine.playing) {
                 if (!confirm("本局游戏尚未结束，是否重新开一局?")) {
                     return;
-                }// } else {
-                //     seconds = minutes = hours = 0;
-                // }
+                }
             }
             seconds = minutes = hours = 0;
             Mine.play();
             minecount.innerText = Mine.mines;
             t = setInterval(function () {
-            /*second.innerText  =(parseFloat(second.innerText )+ 0.1).toFixed(1)*/
+            second.innerText  =(parseFloat(second.innerText )+ 0.1).toFixed(1)
             seconds++;
                 if (seconds >= 60) {
                     seconds = 0;
@@ -366,13 +345,14 @@ function init(row, col, min, max) {
             return;
         }
         else {
-            if (num == 0)
+            if (num == 0 || sessionStorage.getItem("jh") ==0)
             {
                 alert("没有机会了，"+num+"次");
                 return;
             }
             else {
                 num--;
+                sessionStorage.setItem("jh",num)
             }
             Mine.thrid();
         }
@@ -389,10 +369,7 @@ function init(row, col, min, max) {
    
 }
 window.onload = function () {
-    let levels = document.getElementsByName("level"); //等级
-    /*let today = new Date().toLocaleString();
-    if (getCookie("You") == "") setCookie("You", today, 0.36)
-    alert(getCookie("You") + "这段时间你来玩过..")*/
+    let levels = document.getElementsByName("level");
     for (var k = 0; k < levels.length; k++) {
         levels[0].click();
         levels[k].onclick = function () {

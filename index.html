@@ -13,16 +13,13 @@
     <div id="backGround">
         <div id="tcc"></div>
         <h2 id="GameTitle">扫雷</h2>
-        <div id="djjs"></div>
+        <div id="djsl"></div>
         <div class="Explain">
-            <a href="new.html" style="display: inline-block;">
-                <input type="button" value="玩法指导">
-            </a>
             <input type="button" id="start" class="jian" value="确定开始" />
             <input type="button" value="结束本轮" id="end">
         </div>
         <div>
-            <b>剩余雷数：<u id="minecount"></u>个,</b>
+            <b>本局雷数：<u id="minecount"></u>个,</b>
             <b>所用时间：<span id="second"></span>s</b>
         </div>
         <div id="popup">
@@ -34,9 +31,8 @@
             <input type="radio" id="level_3" value="13" name="level" />
             <label for="level_3" title="13*13">高级</label>
             <select id="set">
-                <option value="0" title="默认">选择设置</option>
-                <option value="1" title="失败不全显示" selected>地雷</option>
-                <option value="2" disabled>胜率</option>
+                <option value="0" title="所有格子翻开" selected>默认</option>
+                <option value="1" title="仅显示地雷">地雷</option>
             </select>
         </div>
         <table>
