@@ -1,17 +1,3 @@
-function get(id) {
-    return document.getElementById(id);
-}
-var ds = get("djsl"),
-start = get("start"),
-end = get("end"),
-minecount = get("minecount"),
-second = get("second"),
-backGround = get("backGround"),
-set = get("set"),
-seconds, minutes, hours,num = 3,
-Mine = null,
-t = null;
-sv = set.options[set.selectedIndex].value;
 function Sweep(id, rows, cols, min, max) {
     this.id = id;
     this.rows = rows;
@@ -22,15 +8,18 @@ function Sweep(id, rows, cols, min, max) {
     this.mines = 0; //雷数
     this.markMines = 0; //标记雷数
     this.openCells = 0; //成功打开格子数
-    this.onmarkMine = null; //标记地雷操作的回调函数
+    //this.onmarkMine = null; //标记地雷操作的回调函数
     this.onGameOver = null; //准备游戏结束时的回调函数
     this.playing = false; //未进行
     this.winmark = 0; //🚩成功排雷
     this.chacuo = 0; //🚩失败排雷
     this.iswin = false;
     this.rate = 0;
+    this.blcount = 0;
     this.winSeesion = 0;
     this.loseSeesion = 0;
+    this.second = 0;
+    this.sv = 0;
 }
 Sweep.prototype = {
     constructor: Sweep,
@@ -112,6 +101,18 @@ Sweep.prototype = {
                 if ((i > 0 && j > 0) && this.cells[i - 1][j - 1] == 9) {
                     number++;
                 }
+                var td = this.$("mine_" + i + "_" + j);
+                if (number == 1) {
+                    td.style.color = "#7c85c1"
+                } else if (number == 2) {
+                    td.style.color = "#2f6e19"
+                } else if (number == 3) {
+                    td.style.color = "#af2828"
+                } else if (number == 4) {
+                    td.style.color = "#f38b00"
+                } else if (number == 5) {
+                    td.style.color = "#a074c4"
+                }
                 this.cells[i][j] = number;
             }
         }
@@ -127,12 +128,14 @@ Sweep.prototype = {
                         this.winmark++;
                     } else if (td.className == "fail") {
                         td.className = "mine2";
+                    }else if (td.className == "qm") {
+                        td.className = "qm";
                     } else {
                         td.className = "mine";
                     }
                 }
-                else{
-                    if(sv == 0){
+                else {
+                    if (this.sv == 0) {
                         if (cell != 0)
                             td.innerText = cell;
                         if (td.className == "redFlag") {
@@ -141,8 +144,8 @@ Sweep.prototype = {
                         } else {
                             td.className = "number";
                         }
-                    } 
-                }  
+                    }
+                }
             }
         }
     },
@@ -150,13 +153,12 @@ Sweep.prototype = {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
-	            td.className = "";
+                td.className = "";
                 td.innerText = "";
             }
         }
     },
-    mouseCellsShow: function ()
-    {
+    mouseCellsShow: function () {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var self = this;
@@ -170,18 +172,23 @@ Sweep.prototype = {
                                 if (self.markMines == self.mines) return;
                                 this.className = "redFlag";
                                 self.markMines++;
-
+                            } else if (this.className == "redFlag") {
+                                this.className = "qm";                                
                             } else {
                                 this.className = "";
                                 self.markMines--;
                             }
-                            if (self.onmarkMine != null) {
+                            self.$("marks").innerText = self.markMines
+                            /*if (self.onmarkMine != null) {
                                 self.onmarkMine(self.mines - self.markMines);
-                            }
+                            }*/
                         } else if (e.button == 0) {
                             var number = self.cells[row][col];
                             if (this.className == "redFlag") {
                                 alert("已经标置了旗帜！");
+                                return;
+                            } else if (this.className == "qm") {
+                                alert("已经标置了问号！");
                                 return;
                             }
                             if (number == 9) {
@@ -246,9 +253,9 @@ Sweep.prototype = {
         if (this.onGameOver != null) {
             this.onGameOver();
         }
+        this.blcount =this.winSeesion +this.loseSeesion
     },
-    datas: function ()
-    {
+    datas: function () {
         try {
             if (isNaN(this.rate))
                 console.log(`第${this.winSeesion + this.loseSeesion}局，WinRate Is：0%`);
@@ -281,92 +288,67 @@ Sweep.prototype = {
         this.end();
     },
     winRateNode: function () {
-        ds.innerHTML = '';
+        this.$("djsl").innerHTML = '';
         let template1 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color='red'">${this.rate}</b>%</p>`;
         let template2 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color='green'">${this.rate}</b>%</p>`;
         if (this.rate < 60)
-            ds.innerHTML += template1
+            this.$("djsl").innerHTML += template1
         else
-            ds.innerHTML += template2
+            this.$("djsl").innerHTML += template2
     },
     play: function () {
-        this.markMines = 0;
-        this.openCells = 0;
         this.hideAll();
         this.initCells();
         this.playing = true; //进行
+        this.markMines = 0;
+        this.openCells = 0;
+        this.second = 0
+        this.$("second").innerText = 0;
+        this.$("marks").innerText = 0;
         this.mines = this.getRandom(this.min, this.max);
+        this.$("minecount").innerText = Mine.mines;
         this.setMines();
         this.showCount();
         this.mouseCellsShow();
         this.end();
-        second.innerText = 0;
     }
+}
+var Mine = null,
+    t = null;
+document.querySelector("table").oncontextmenu = () => {
+    return false;
 }
 function init(row, col, min, max) {
     Mine = new Sweep("lattices", row, col, min, max);
     Mine.draw();
-    minecount.innerText = "0";
-    second.innerText = "0";
-    start.onclick = function () {
-        if(Mine.openCells>0 && Mine.playing) return;
-        else{
-            if (Mine.playing) {
-                if (!confirm("本局游戏尚未结束，是否重新开一局?")) {
-                    return;
-                }
-            }
-            seconds = minutes = hours = 0;
-            Mine.play();
-            minecount.innerText = Mine.mines;
-            t = setInterval(function () {
-            //second.innerText  =(parseFloat(second.innerText )+ 0.1).toFixed(1)
-            seconds++;
-                if (seconds >= 60) {
-                    seconds = 0;
-                    minutes += 1;    
-                }
-                if (minutes >= 60) {
-                    minutes = 0;
-                    hours += 1;
-                }
-                if (minutes > 0)
-                    second.innerText = minutes + "m" + seconds;
-                else if (hours > 0)
-                    second.innerText = hours + "h" + minutes + "m" + seconds;
-                else
-                    second.innerText = seconds;
-            }, 1000);
-        }
-    }
-    end.onclick = function () {
-        if (!Mine.playing) {
-            alert("游戏还未开始呢！");
-            return;
-        }
-        else {
-            if (num == 0 || sessionStorage.getItem("jh") ==0)
-            {
-                alert("没有机会了，"+num+"次");
+    Mine.$("start").onclick = function () {
+        if (Mine.openCells > 0 && Mine.playing) {
+            if (!confirm("本局游戏尚未结束，是否重新开一局?")) {
                 return;
             }
-            else {
-                num--;
-                sessionStorage.setItem("jh",num)
-            }
-            Mine.thrid();
         }
+        Mine.play();
+        t = setInterval(function () {
+            //second.innerText  =(parseFloat(second.innerText )+ 0.1).toFixed(2)
+            Mine.$("second").innerText = Mine.second++;
+        }, 1000);
     }
-    set.onchange = function(){
-        sv =set.options[set.selectedIndex].value;
+    set.onchange = function () {
+        let set = Mine.$("set")
+        Mine.sv = set.options[set.selectedIndex].value;
     }
-    Mine.onmarkMine = function (count) {
-        minecount.innerText = count;
-    }
+    /*Mine.onmarkMine = function (count) {
+        Mine.$("minecount").innerText = count;
+    }*/
     Mine.onGameOver = function () {
         clearInterval(t);
     }
-   
+    Mine.$("reset").onclick = function () {
+        if(Mine.blcount<0){
+            alert("小于1局无法复盘");
+        }
+        console.log(Mine.blcount)
+    }
 }
 window.onload = function () {
     let levels = document.getElementsByName("level");
@@ -377,17 +359,14 @@ window.onload = function () {
                 alert("游戏还在进行，不能切换！");
                 return false;
             }
-            minecount.innerHTML = "0";
             var levelValue = parseInt(this.value);
             var min = levelValue;
             var max = min + Math.ceil((min * min * 0.1));
-            if (isNaN(levelValue) || isNaN(max))
+            if (isNaN(levelValue) || isNaN(max)) {
                 init(5, 5, 5, 8);
-            else
+            } else {
                 init(levelValue, levelValue, min, max);
+            }
         }
-    }
-    backGround.oncontextmenu = () => {
-        return false;
     }
 }

@@ -10,32 +10,34 @@
 </head>
 
 <body>
-    <div id="backGround">
-        <div id="tcc"></div>
-        <h2 id="GameTitle">扫雷</h2>
-        <div id="djsl"></div>
-        <div class="Explain">
-            <input type="button" id="start" class="jian" value="确定开始" />
-            <input type="button" value="结束本轮" id="end">
+    <div id="app">
+        <div style="width: 500px;margin: 0 auto;">
+            <h2 id="GameTitle">扫雷</h2>
+            <div id="djsl"></div>
+            <div class="Explain">
+                <input type="button" id="start" class="jian" value="开始游戏" />
+                <input type="button" value="重新再来" id="reset" />
+            </div>
+            <div>
+                <b>本局雷数：<u id="minecount">0</u>个,</b>
+                <b>标记数<u id="marks">0</u>个,</b>
+                <b>时间：<span id="second">0</span>s</b>
+            </div>
+            <div id="popup">
+                <label>级别选择：</label>
+                <label for="level_1" title="5*5">初级</label>
+                <input type="radio" id="level_1" checked="checked" value="5" name="level" />
+                <label for="level_2" title="9*9">中级</label>
+                <input type="radio" id="level_2" value="9" name="level" />
+                <label for="level_3" title="13*13">高级</label>
+                <input type="radio" id="level_3" value="20" name="level" />                
+                <select id="set">
+                    <option value="0" selected>默认</option>
+                    <option value="1">地雷</option>
+                </select>
+            </div>
         </div>
-        <div>
-            <b>本局雷数：<u id="minecount"></u>个,</b>
-            <b>所用时间：<span id="second"></span>s</b>
-        </div>
-        <div id="popup">
-            <label>级别选择：</label>
-            <input type="radio" id="level_1" checked="checked" value="5" name="level" />
-            <label for="level_1" title="5*5">初级</label>
-            <input type="radio" id="level_2" value="9" name="level" />
-            <label for="level_2" title="9*9">中级</label>
-            <input type="radio" id="level_3" value="13" name="level" />
-            <label for="level_3" title="13*13">高级</label>
-            <select id="set">
-                <option value="0" title="所有格子翻开" selected>默认</option>
-                <option value="1" title="仅显示地雷">地雷</option>
-            </select>
-        </div>
-        <table>
+        <table style="border: 1px solid rgb(138, 138, 138);">
             <tbody id="lattice"></tbody>
         </table>
     </div>
