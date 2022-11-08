@@ -13,7 +13,7 @@
 #GameTitle {
     padding: 20px 0 20px 28px;
     color: #39c5bb;
-    background: url(../images/logo.png) no-repeat 49%;
+    background: url(../images/logo.png) no-repeat 50%;
 }
 .Explain {
     line-height: 30px;
@@ -40,27 +40,28 @@ td {
     background: #E6E7E8;
     border: 1px solid #666;
 }
-
-#lattice td.flagError {
-    background: url(../images/flagError.png) no-repeat center;
+#lattice td.redFlag {
+    background: url(../images/redFlag.png) no-repeat center;
 }
-
 #lattice td.flagOk {
     background: url(../images/flagOk.png) no-repeat center;
 }
-
+#lattice td.flagError {
+    background: url(../images/flagError.png) no-repeat center;
+}
 #lattice td.mine {
     background: url(../images/mine.png) no-repeat center;
  /* border: 1px solid blue; */
 }
-
 #lattice td.mine2 {
     background: url(../images/mine2.png) no-repeat center;
     background-color:#500c0c;
 }
-
-#lattice td.redFlag {
-    background: url(../images/redFlag.png) no-repeat center;
+#lattice td.mine3 {
+    background: url(../images/mine3.png) no-repeat center;
+}
+#lattice td.qmError {
+    background: url(../images/qmError.png) no-repeat center;
 }
 #lattice td.qm {
     background: url(../images/qm.png) no-repeat center;
