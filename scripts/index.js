@@ -74,12 +74,16 @@ Sweep.prototype = {
         }
     },
     showCount: function () {
-        var ls = window.localStorage,tc;
+        var ls = window.sessionStorage,
+            tc,
+            dcolor = ['#7c85c1','#2f6e19','#af2828','#f38b00','#a074c4'];
         if (typeof ls["theme_color"] == "undefined") {
-            tc = ['#7c85c1','#2f6e19','#af2828','#f38b00','#a074c4']
-            ls.setItem('theme_color',JSON.stringify(['#7c85c1','#2f6e19','#af2828','#f38b00','#a074c4']))
+            ls.setItem('theme_color',JSON.stringify(dcolor))
         } else {
             tc = JSON.parse(ls.getItem("theme_color"));
+            if(!Array.isArray(tc)||tc.length <5){
+                tc = dcolor;
+            }
         }
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
