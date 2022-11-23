@@ -74,6 +74,13 @@ Sweep.prototype = {
         }
     },
     showCount: function () {
+        var ls = window.localStorage,tc;
+        if (typeof ls["theme_color"] == "undefined") {
+            tc = ['#7c85c1','#2f6e19','#af2828','#f38b00','#a074c4']
+            ls.setItem('theme_color',JSON.stringify(['#7c85c1','#2f6e19','#af2828','#f38b00','#a074c4']))
+        } else {
+            tc = JSON.parse(ls.getItem("theme_color"));
+        }
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var number = 0
@@ -107,15 +114,15 @@ Sweep.prototype = {
                 }
                 var td = this.$("mine_" + i + "_" + j);
                 if (number == 1) {
-                    td.style.color = "#7c85c1"
+                    td.style.color = tc[number-1]
                 } else if (number == 2) {
-                    td.style.color = "#2f6e19"
+                    td.style.color = tc[number-1]
                 } else if (number == 3) {
-                    td.style.color = "#af2828"
+                    td.style.color = tc[number-1]
                 } else if (number == 4) {
-                    td.style.color = "#f38b00"
+                    td.style.color = tc[number-1]
                 } else if (number == 5) {
-                    td.style.color = "#a074c4"
+                    td.style.color = tc[number-1]
                 }
                 this.cells[i][j] = number;
             }
