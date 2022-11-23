@@ -74,13 +74,13 @@ Sweep.prototype = {
         }
     },
     showCount: function () {
-        var ls = window.sessionStorage,
+        let ss = window.sessionStorage,
             tc,
             dcolor = ['#7c85c1','#2f6e19','#af2828','#f38b00','#a074c4'];
-        if (typeof ls["theme_color"] == "undefined") {
-            ls.setItem('theme_color',JSON.stringify(dcolor))
+        if (typeof ss["theme_color"] == "undefined") {
+            ss.setItem('theme_color',JSON.stringify(dcolor))
         } else {
-            tc = JSON.parse(ls.getItem("theme_color"));
+            tc = JSON.parse(ss.getItem("theme_color"));
             if(!Array.isArray(tc)||tc.length <5){
                 tc = dcolor;
             }
@@ -372,10 +372,19 @@ function init(banner, row, col, min, max) {
     Mine.$("reset").onclick = null;
 }
 window.onload = function () {
+    var ls = window.localStorage,
+        l;
+    if (typeof ls["hierarchical"] != "undefined") {
+       l = parseInt(ls.getItem("hierarchical"));
+    }else{
+        l = 0
+        ls.setItem('hierarchical',l);
+    }
+    
     let myContainer = document.getElementById("lattice");
     let levels = document.getElementsByName("level");
     for (var k = 0; k < levels.length; k++) {
-        levels[0].click();
+        levels[l].click();
         levels[k].onclick = function () {
             if (Mine && Mine.playing) {
                 alert("游戏还在进行，不能切换！");
