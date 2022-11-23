@@ -117,17 +117,22 @@ Sweep.prototype = {
                     number++;
                 }
                 var td = this.$("mine_" + i + "_" + j);
-                if (number == 1) {
-                    td.style.color = tc[number-1]
-                } else if (number == 2) {
-                    td.style.color = tc[number-1]
-                } else if (number == 3) {
-                    td.style.color = tc[number-1]
-                } else if (number == 4) {
-                    td.style.color = tc[number-1]
-                } else if (number == 5) {
-                    td.style.color = tc[number-1]
+                try {
+                    if (number == 1) {
+                        td.style.color = tc[number-1]
+                    } else if (number == 2) {
+                        td.style.color = tc[number-1]
+                    } else if (number == 3) {
+                        td.style.color = tc[number-1]
+                    } else if (number == 4) {
+                        td.style.color = tc[number-1]
+                    } else if (number == 5) {
+                        td.style.color = tc[number-1]
+                    }
+                } catch (e) {
+                    console.error(e)
                 }
+                
                 this.cells[i][j] = number;
             }
         }
