@@ -2,299 +2,285 @@
 <html>
 
 <head>
-<meta charset="UTF-8">
-<title>扫雷网页版</title>
-    <!--标题栏-->
-    <link rel="icon" href="minesweeper/swptop01.ico" type="image/x-icon">
-    <!--收藏夹-->
-    <link rel="shortcut icon" href="minesweeper/swptop01.ico" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="minesweeper/css2021v1.css?v=20210811" />
-    <meta name="keywords" content="扫雷,扫雷游戏,扫雷网页版,网页扫雷,在线扫雷" />
-    <meta name="description" content="扫雷网页版，模拟 windows7 自带扫雷游戏，支持双键操作、记录成绩、自定义模式等功能，作者张晓雷">
+    <meta charset="UTF-8">
+    <title>扫雷 Minesweeper 2.0 beta</title>
+    <link rel="stylesheet" type="text/css" href="MSProSubject/style.css" />
+    <script src="MSProSubject/drawimage.js"></script>
 </head>
 
 <body>
 
-    <div class="feedback"><a target="_blank" href="index.html">反馈</a></div>
+    <canvas style="display: none; z-index: -1;" id='canvas'></canvas>
+
+    <div id="main">
+
+        <div id="opt">
+            <div class="opt-icon">
+                <svg  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path>
+                  </svg>
+            </div>
+            <!--设置菜单列表-->
+            <div id="opt-list">
+
+                <ul>
+                    <li id="opt-restart">重新开始</li>
+
+                    <li>难度<i class="spot"></i>
+                        <ul class="opt-level">
+                            <li>初级</li>
+                            <li>中级</li>
+                            <li>高级</li>
+                        </ul>
+                    </li>
+
+                    <li>颜色<i class="spot"></i>
+                        <ul class="opt-bg">
+                            <li>绿色</li>
+                            <li>棕色</li>
+                            <li>蓝色</li>
+                        </ul>
+                    </li>
+
+                    <li id='opt-custom'>自定义</li>
+
+                    <li id='hint-switch'>问号 : </li>
+
+                    <li id="opt-info">统计信息</li>
+
+                    <li id="opt-about">关于</li>
+
+                    <li><a target="_blank" style="color: inherit; text-decoration: none;" href="https://zhangxiaoleiwk.gitee.io/saolei.html">旧版本</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="fullscreen-select">
+            <button onclick="fullscreenmode()" title="全屏模式">全屏</button><button onclick="exitscreenmode()" title="退出全屏">退出</button>
+        </div>
+    
+
+        <div id='topbar'>
+            <div class="timer">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path
+                        d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z">
+                    </path>
+                </svg>
+                <div>
+                    <span id="timer">0</span>
+                </div>
+            </div>
+            <div title="重新开始" class="restart" onclick="toprestart()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path
+                        d="M255.545 8c-66.269.119-126.438 26.233-170.86 68.685L48.971 40.971C33.851 25.851 8 36.559 8 57.941V192c0 13.255 10.745 24 24 24h134.059c21.382 0 32.09-25.851 16.971-40.971l-41.75-41.75c30.864-28.899 70.801-44.907 113.23-45.273 92.398-.798 170.283 73.977 169.484 169.442C423.236 348.009 349.816 424 256 424c-41.127 0-79.997-14.678-110.63-41.556-4.743-4.161-11.906-3.908-16.368.553L89.34 422.659c-4.872 4.872-4.631 12.815.482 17.433C133.798 479.813 192.074 504 256 504c136.966 0 247.999-111.033 248-247.998C504.001 119.193 392.354 7.755 255.545 8z">
+                    </path>
+                </svg>
+            </div>
+            <div class="bomb">
+                <div>
+                    <span id="mineNum">0</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path
+                        d="M440.5 88.5l-52 52L415 167c9.4 9.4 9.4 24.6 0 33.9l-17.4 17.4c11.8 26.1 18.4 55.1 18.4 85.6 0 114.9-93.1 208-208 208S0 418.9 0 304 93.1 96 208 96c30.5 0 59.5 6.6 85.6 18.4L311 97c9.4-9.4 24.6-9.4 33.9 0l26.5 26.5 52-52 17.1 17zM500 60h-24c-6.6 0-12 5.4-12 12s5.4 12 12 12h24c6.6 0 12-5.4 12-12s-5.4-12-12-12zM440 0c-6.6 0-12 5.4-12 12v24c0 6.6 5.4 12 12 12s12-5.4 12-12V12c0-6.6-5.4-12-12-12zm33.9 55l17-17c4.7-4.7 4.7-12.3 0-17-4.7-4.7-12.3-4.7-17 0l-17 17c-4.7 4.7-4.7 12.3 0 17 4.8 4.7 12.4 4.7 17 0zm-67.8 0c4.7 4.7 12.3 4.7 17 0 4.7-4.7 4.7-12.3 0-17l-17-17c-4.7-4.7-12.3-4.7-17 0-4.7 4.7-4.7 12.3 0 17l17 17zm67.8 34c-4.7-4.7-12.3-4.7-17 0-4.7 4.7-4.7 12.3 0 17l17 17c4.7 4.7 12.3 4.7 17 0 4.7-4.7 4.7-12.3 0-17l-17-17zM112 272c0-35.3 28.7-64 64-64 8.8 0 16-7.2 16-16s-7.2-16-16-16c-52.9 0-96 43.1-96 96 0 8.8 7.2 16 16 16s16-7.2 16-16z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+
+        <div id='desk-border'>
+            <div id='desk-sd'></div>
+            <div id="desk"></div>
+        </div>
+    </div>
 
     <!--主窗口-->
-    <div id="minesweeper" class="window">
-            <!--顶栏-->
-            <div class="window-title">
-    
-                <div id="move-mine" class="window-title-left-span">扫雷</div>
-    
-                <div class="window-title-right-icon">
-    
-                    <span class="m-point3"></span>
-    
-                </div>
-    
+    <div style="display: none;" id="minesweeper" class="window">
+        <!--顶栏-->
+        <div class="window-title">
+
+            <div id="move-mine" class="window-title-left-span">扫雷 Minesweeper</div>
+
+            <div class="window-title-right-icon">
+
+                <span class="m-point3"></span>
+
             </div>
-            <!--工作区域-->
-            <div class="window-container">
-                <!--设置选项-->
-                <div id="opt">
-                    <!--设置菜单列表-->
-                    <div id="opt-list">
-                        
+
+        </div>
+    </div>
+    <!--END-->
+
+    <!--获胜窗口-->
+    <div id="games-win-window" class="window">
+        <div class="window-title">
+            <div id="move-win" class="window-title-left-span">恭喜!</div>
+            <div class="window-title-right-icon">
+                <span class="point3"></span>
+            </div>
+        </div>
+
+        <div class="window-container">
+            <div id="games-win-content">
+                <span>完成!</span>
+                <span id="spendTime"></span>
+            </div>
+            <div class="restart-bt-box">
+                <button id="box-restart">重新开始</button>
+                <button class="point3">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!--失败窗口-->
+    <div id="games-lost-window" class="window">
+        <div class="window-title">
+            <div id="move-lost" class="window-title-left-span">游戏结束!</div>
+            <div class="window-title-right-icon">
+                <span class="point3"></span>
+            </div>
+        </div>
+
+        <div class="window-container">
+            <div id="games-lost-content">
+                <span>触雷!</span>
+                <span>完成 <b id='degree' style="color: orange;"></b>%</span>
+            </div>
+            <div class="restart-bt-box">
+                <button id="box2-restart">重新开始</button>
+                <button class="point3">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!--游戏信息统计-->
+    <div id="games-info-window" class="window">
+
+        <div class="window-title">
+            <div id="move-info" class="window-title-left-span">统计信息</div>
+            <div class="window-title-right-icon">
+                <span class="point3"></span>
+            </div>
+        </div>
+
+        <div class="window-container">
+
+            <div id="contentBox">
+
+                <div class="info-top-label">
+                    <span id="normal-info">初级</span>
+                    <span id="middle-info">中级</span>
+                    <span id="hard-info">高级</span>
+                </div>
+
+                <div id="threeInfo">
+                    <div id="win5">
+                        <span>最佳成绩</span>
                         <ul>
-                            <li id="opt-restart">重新开始</li>
-    
-                            <li><span class="right-tri">难度<i class="spot"></i></span>
-                                <ul class="opt-level">
-                                    <li>初级</li>
-                                    <li>中级</li>
-                                    <li>高级</li>
-                                </ul>
-                            </li>
-                           
-                            <li><span class="right-tri">颜色<i class="spot"></i></span>
-                                <ul class="opt-bg">
-                                    <li>绿色</li>
-                                    <li>棕色</li>
-                                    <li>蓝色</li>
-                                </ul>
-                            </li>
-
-                            <li id='opt-custom'>自定义</li>
-
-                            <li id='hint-switch'>问号 : </li>
-                           
-                            <li id="opt-info">统计信息</li>
-    
-                            <li id="opt-about">关于</li>
-
-                            <li style="display: none;"><a target="_blank" style="color: green; text-decoration: none;" href="https://zhangxiaoleiwk.gitee.io/saolei2.html">新版本!</a></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </div>
+                    <div id="win5info">
+                        <ul>
+                            <li>游戏总局：<span></span></li>
+                            <li>已胜：<span></span></li>
+                            <li>胜率：<span></span></li>
+                            <li>最多连胜：<span></span></li>
+                            <li>最多连败：<span></span></li>
                         </ul>
                     </div>
                 </div>
-    
-                <!--顶部信息-->
-                <div id="topTools">
-                    <div class="toolBox"><span class="label">时间</span><br><span id="timer">0</span></div>
-                    <div class="toolBox"><span class="label">地雷</span><br><span id="mineNum">&nbsp</span></div>
-                </div>
-    
-                <!--格子工作区域-->
-                <div class="desk_border">
-                    <div id="desk"></div>
-                </div>
+            </div>
+            <div class="reset-game-data">
+                <button class="point3">关闭</button>
+                <button id='rst-data'>删除</button>
             </div>
         </div>
-        <!--END-->
-    
-        <!--获胜窗口-->
-        <div id="games-win-window" class="window">
-            <div class="window-title">
-                <div  id="move-win" class="window-title-left-span">恭喜!</div>
-                <div class="window-title-right-icon">
-                    <span class="point3"></span>
-                </div>
-            </div>
-    
-            <div class="window-container">
-                <div id="games-win-content">
-                    <span>完成!</span>
-                    <span id="spendTime"></span>
-                </div>
-                <div class="restart-bt-box">
-                    <button id="box-restart" class="button">重新开始</button>
-                    <button class="button point3">关闭</button>
-                </div>
+    </div>
+
+    <!--自定义窗口-->
+    <div id="games-custom-window" class="window">
+        <div class="window-title">
+            <div id="move-custom" class="window-title-left-span">自定义</div>
+            <div class="window-title-right-icon">
+                <span class="point3"></span>
             </div>
         </div>
 
-        <!--失败窗口-->
-        <div id="games-lost-window" class="window">
-            <div class="window-title">
-                <div id="move-lost" class="window-title-left-span">游戏结束!</div>
-                <div class="window-title-right-icon">
-                    <span class="point3"></span>
-                </div>
+        <div class="window-container">
+
+            <div class="custom">
+
+                <div>宽度 (9-30)<input min='9' max="30" id='custom-w' type="number" value="9" /></div>
+                <div>高度 (9-24)<input min="9" max="24" id='custom-h' type="number" value="9" /></div>
+                <div>地雷 (10-667)<input min="10" max="667" id='custom-n' type="number" value="10" /></div>
+
             </div>
-        
-            <div class="window-container">
-                <div id="games-lost-content">
-                    <span>触雷!</span>
-                    <span>完成 <b id='degree' style="color: orange;"></b>%</span>
-                </div>
-                <div class="restart-bt-box">
-                    <button id="box2-restart" class="button">重新开始</button>
-                    <button class="button point3">关闭</button>
-                </div>
+
+            <div class="custom-tips">自定义模式下不能保存成绩！</div>
+
+            <div class="custom-bt-box">
+                <button class="point3">取消</button>
+                <button id='custom-bt'>开始</button>
             </div>
         </div>
-    
-        <!--游戏信息统计-->
-        <div id="games-info-window" class="window">
-    
-            <div class="window-title">
-                <div  id="move-info" class="window-title-left-span">统计信息</div>
-                <div class="window-title-right-icon">
-                    <span class="point3"></span>
-                </div>
-            </div>
-    
-            <div class="window-container">
-    
-                <div id="contentBox">
+    </div>
 
-                    <div class="info-top-label">
-                        <span id="normal-info">初级</span>
-                        <span id="middle-info">中级</span>
-                        <span id="hard-info">高级</span>
-                    </div>
+    <!--关于游戏-->
+    <div id="about-games-window" class="window">
 
-                    <div id="threeInfo">
-                        <div id="win5">
-                            <span>最佳成绩</span>
-                            <ul>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                                <li></li>
-                            </ul>
-                        </div>
-                        <div id="win5info">
-                            <ul>
-                                <li>游戏总局：<span></span></li>
-                                <li>已胜：<span></span></li>
-                                <li>胜率：<span></span></li>
-                                <li>最多连胜：<span></span></li>
-                                <li>最多连败：<span></span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="reset-game-data">
-                    <button class="button point3">关闭</button>
-                    <button id='rst-data' class="button">清除</button>
-                </div>
+        <div class="window-title">
+            <div id="move-about" class="window-title-left-span">关于</div>
+            <div class="window-title-right-icon">
+                <span class="point3"></span>
             </div>
         </div>
 
-                <!--自定义窗口-->
-                <div id="games-custom-window" class="window">
-                    <div class="window-title">
-                        <div id="move-custom" class="window-title-left-span">自定义</div>
-                        <div class="window-title-right-icon">
-                            <span class="point3"></span>
-                        </div>
-                    </div>
-                
-                    <div class="window-container">
-                
-                        <div class="custom">
-                
-                            <div>宽度 (9-30)<input min='9' max="30" id='custom-w' type="number" value="9" /></div>
-                            <div>高度 (9-24)<input min="9" max="24" id='custom-h' type="number" value="9" /></div>
-                            <div>地雷 (10-667)<input min="10" max="667" id='custom-n' type="number" value="10" /></div>
-                
-                        </div>
-                
-                        <div class="custom-tips">自定义模式下不能保存成绩！</div>
-                
-                        <div class="custom-bt-box">
-                            <button class="button point3">取消</button>
-                            <button id='custom-bt' class="button">开始</button>
-                        </div>
-                    </div>
-                </div>
-    
-        <!--关于游戏-->
-        <div id="about-games-window" class="window">
-    
-            <div class="window-title">
-                <div  id="move-about" class="window-title-left-span">关于</div>
-                <div class="window-title-right-icon">
-                    <span class="point3"></span>
-                </div>
-            </div>
-    
-            <div class="window-container">
-                <div id="about-games-content">
-                    <div class="author-img"><img title="FAR: Lone Sails" src="minesweeper/梵高.jpg"/></div>
-                    <div class="author">
-                        <p><strong style="font-size: 110%;">--介绍--</strong></p>
-                        <p>
-                            游戏功能及操作细节模拟了 Windows 7 自带扫雷：
-                            <ul>
-                                <li>第一步不会触雷，也不会是数字。</li>
-                                <li>支持双键排除操作。</li>
-                                <li>支持自定义模式。</li>
-                                <li>可关闭问号。</li>
-                                <li>在本地记录每种难度下最佳五局成绩，可随时清除。</li>
-                                <li>三种难度和图标颜色供选择。</li>
-                            </ul>
-                        </p>
-                        <p>
-                            由于作者自身的技术水平有限，游戏中的计时器并不精确，请将游戏成绩仅作为对内参考。
-                        </p>
-                        <p>
-                            <u>发现游戏 bug 或者提供建议，欢迎给我发邮件。</u>
-                        </p>
-                        <p>邮箱：zhangxiaolei@outlook.com</p>
-                        <p>
-                            <strong style="font-size: 110%;">--感谢--</strong>
-                        </p>
-                        <p>
-                            <div class="reward-list">
-                                感谢<span id='show-reward-name'>5</span>位玩家的支持！
-                                <p id='reward-name' style="display: none;">
-                                    <b>Leaf</b>
-                                    <b>**亮</b>
-                                    <b>匿名</b>
-                                    <b>雨下的清辰</b>
-                                    <b>Asphyxia</b>
-                                </p>
-                            </div>
-                        </p>
-                        <p>
-                            <strong style="font-size: 110%;">--更新--</strong>
-                        </p>
-                        <p>
-                            2021-3-20
-                            <br/>
-                            将数字提示由文字改为图标，以消除不同浏览器之间的显示差异。
-                        </p>
-                        <p>
-                            2021-2-10
-                            <br/>
-                            增加问号提示开关。
-                        </p>
-                        <p>
-                            2020-12-17
-                            <br/>
-                            增加自定义模式。
-                            <br/>
-                            改善了双键操作时的动画效果，提升操作手感。
-                        </p>
-                        <p>
-                            2020-9-14
-                            <br/>
-                            修复了游戏结束判定。
-                        </p>
-                    </div>
+        <div class="window-container">
+            <div id="about-games-content">
+                <div class="author-img"><img src="MSProSubject/1233.jpg" /></div>
+                <div class="author">
+                    <p><strong>介绍</strong></p>
+                    <p>
+                        游戏实现了 windows7 自带扫雷的大多数特性：
+                    <ul>
+                        <li>第一步不会触雷，同时也不会是数字。</li>
+                        <li>支持双键排除操作。</li>
+                        <li>有三种难度可以选择。</li>
+                        <li>游戏在本地记录每种难度下最佳五局成绩，可随时清除。</li>
+                        <li>支持自定义模式。</li>
+                        <li>可更换图标颜色。</li>
+                    </ul>
+                    </p>
+                    <p>
+                        游戏基于我之前做的<a target="_blank" href="https://zhangxiaoleiwk.gitee.io/saolei.html"><strong>网页扫雷</strong></a>，在此基础上实现矢量图标功能。
+                    </p>
+                    <p>
+                        由于 JavaScript 的特性以及作者自身的技术水平，游戏中的计时器并不精确，请将游戏成绩仅作为对内参考。
+                    </p>
+                    <p>
+                        发现 bug 或者想和作者交流，欢迎给我发邮件。
+                    </p>
+                    <p>作者：张晓雷</p>
+                    <p title="Ctrl + C 复制">邮箱：zhangxiaolei@outlook.com</p>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="reward">
-            <span>支持作者 :</span>
-            <div class="wx">
-                <span>微信</span>
-                <img src="minesweeper/rwx.jpg" />
-            </div>
-            <div class="zfb">
-                <span>支付宝</span>
-                <img src="minesweeper/rzfb.jpg" />
-            </div>
-        </div>
-    
-    <script src="minesweeper/js2021v2.js?v=20210811"></script>
-    
+    <div class="tips" style='display: none'>
+        <strong>滑动鼠标滚轮可以调节游戏画面尺寸！</strong><span onclick="closeTips()">[X]</span>
+    </div>
+
+    <script src="MSProSubject/game.js"></script>
+    <script src="MSProSubject/fullscreen.js"></script>
+
 </body>
 
 </html>
