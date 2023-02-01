@@ -283,15 +283,15 @@ Sweep.prototype = {
     },
     datas: function () {
         this.$("djsl").innerHTML = '';
-        let template1 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color='red'">${this.rate}</b>%</p>`;
-        let template2 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color='green'">${this.rate}</b>%</p>`;
+        let template1 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color:red;">${this.rate}</b>%</p>`;
+        let template2 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color:green">${this.rate}</b>%</p>`;
         if (this.rate < 60) {
             this.$("djsl").innerHTML += template1;
         } else {
             this.$("djsl").innerHTML += template2;
         }
         if (isNaN(this.rate) || this.gameState.iswin) {
-            console.log(`第${this.winSeesion + this.loseSeesion}局，WinRate Is：0%`);
+            console.log(`第${this.winSeesion + this.loseSeesion}局，WinRate Is：${this.rate}%`);
             console.log("恭喜你赢了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
             "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
             this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了" + this.winSeesion + "次，输了" + this.loseSeesion + "次");
