@@ -19,8 +19,8 @@ function Sweep(Container, rows, cols, min, max) {
         currentState: "EndPage",
         states: ['EndPage', 'Playing', 'Won', 'Lost']
     }
-    this.rate = 0;
-    this.blcount = 0;
+    this.rate = 0; //胜率
+    this.blcount = 0; //场次
     this.winSeesion = 0;
     this.loseSeesion = 0;
     this.second = 0;
@@ -73,15 +73,15 @@ Sweep.prototype = {
             }
         }
     },
-    showCount: function () {
+    setFigures: function () {
         let ss = window.sessionStorage,
             tc,
-            dcolor = ['#7c85c1','#2f6e19','#af2828','#f38b00','#a074c4'];
+            dcolor = ['#7c85c1', '#2f6e19', '#af2828', '#f38b00', '#a074c4'];
         if (typeof ss["theme_color"] == "undefined") {
-            ss.setItem('theme_color',JSON.stringify(dcolor))
+            ss.setItem('theme_color', JSON.stringify(dcolor))
         } else {
             tc = JSON.parse(ss.getItem("theme_color"));
-            if(!Array.isArray(tc)||tc.length <5){
+            if (!Array.isArray(tc) || tc.length < 5) {
                 tc = dcolor;
             }
         }
@@ -119,20 +119,20 @@ Sweep.prototype = {
                 var td = this.$("mine_" + i + "_" + j);
                 try {
                     if (number == 1) {
-                        td.style.color = tc[number-1]
+                        td.style.color = tc[number - 1]
                     } else if (number == 2) {
-                        td.style.color = tc[number-1]
+                        td.style.color = tc[number - 1]
                     } else if (number == 3) {
-                        td.style.color = tc[number-1]
+                        td.style.color = tc[number - 1]
                     } else if (number == 4) {
-                        td.style.color = tc[number-1]
+                        td.style.color = tc[number - 1]
                     } else if (number == 5) {
-                        td.style.color = tc[number-1]
+                        td.style.color = tc[number - 1]
                     }
                 } catch (e) {
                     console.error(e)
                 }
-                
+
                 this.cells[i][j] = number;
             }
         }
@@ -282,22 +282,26 @@ Sweep.prototype = {
         this.blcount = this.winSeesion + this.loseSeesion
     },
     datas: function () {
-        try {
-            if (isNaN(this.rate))
-                console.log(`第${this.winSeesion + this.loseSeesion}局，WinRate Is：0%`);
-            else
-                console.log(`第${this.winSeesion + this.loseSeesion}局，WinRate Is：${this.rate}%`);
-        } catch (error) {
-            console.log(error);
+        this.$("djsl").innerHTML = '';
+        let template1 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color='red'">${this.rate}</b>%</p>`;
+        let template2 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color='green'">${this.rate}</b>%</p>`;
+        if (this.rate < 60) {
+            this.$("djsl").innerHTML += template1;
+        } else {
+            this.$("djsl").innerHTML += template2;
         }
-        if (this.gameState.iswin)
+        if (isNaN(this.rate) || this.gameState.iswin) {
+            console.log(`第${this.winSeesion + this.loseSeesion}局，WinRate Is：0%`);
             console.log("恭喜你赢了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
-                "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
-                this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了" + this.winSeesion + "次，输了" + this.loseSeesion + "次");
-        else
+            "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
+            this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了" + this.winSeesion + "次，输了" + this.loseSeesion + "次");
+        }
+        else {
+            console.log(`第${this.winSeesion + this.loseSeesion}局，WinRate Is：${this.rate}%`);
             console.log("很遗憾你输了此局！您此局所用时间：" + second.innerText + "秒," + "您此局的总雷数有：" + this.mines + "个," +
                 "您标成功在雷上的红旗数有" + this.winmark + "枚," + "您标错的旗子数有" + this.chacuo + "枚," + "您此局标了" +
                 this.markMines + "枚旗子" + "还有" + (this.mines - this.markMines) + "枚未标,赢了" + this.winSeesion + "次，输了" + this.loseSeesion + "次");
+        }
     },
     defaults: function () {
         this.showAll();
@@ -305,22 +309,6 @@ Sweep.prototype = {
         this.playing = false;
         this.end();
         this.datas();
-        this.winRateNode();
-    },
-    thrid: function () {
-        this.showAll();
-        this.removeMouse();
-        this.playing = false;
-        this.end();
-    },
-    winRateNode: function () {
-        this.$("djsl").innerHTML = '';
-        let template1 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color='red'">${this.rate}</b>%</p>`;
-        let template2 = `<p>进行了<b>${this.winSeesion + this.loseSeesion}</b>局,胜率为<b style="color='green'">${this.rate}</b>%</p>`;
-        if (this.rate < 60)
-            this.$("djsl").innerHTML += template1
-        else
-            this.$("djsl").innerHTML += template2
     },
     play: function () {
         this.hideAll();
@@ -332,11 +320,10 @@ Sweep.prototype = {
         this.$("marks").innerText = 0;
         this.initCells();
         this.mines = this.getRandom(this.min, this.max);
-        this.$("minecount").innerText = Mine.mines;
+        this.$("minecount").innerText = this.mines;
         this.setMines();
-        this.showCount();
+        this.setFigures();
         this.mouseCellsShow();
-        this.end();
     }
 }
 var Mine = null,
@@ -372,19 +359,10 @@ function init(banner, row, col, min, max) {
     Mine.$("reset").onclick = null;
 }
 window.onload = function () {
-    var ls = window.localStorage,
-        l;
-    if (typeof ls["hierarchical"] != "undefined") {
-       l = parseInt(ls.getItem("hierarchical"));
-    }else{
-        l = 0
-        ls.setItem('hierarchical',l);
-    }
-    
     let myContainer = document.getElementById("lattice");
     let levels = document.getElementsByName("level");
     for (var k = 0; k < levels.length; k++) {
-        levels[l].click();
+        levels[0].click();
         levels[k].onclick = function () {
             if (Mine && Mine.playing) {
                 alert("游戏还在进行，不能切换！");
