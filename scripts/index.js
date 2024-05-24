@@ -335,7 +335,7 @@ function init(banner, row, col, min, max) {
     Mine = new Sweep(banner, row, col, min, max);
     Mine.draw();
     function start() {
-        if (Mine.openCells > 0 && Mine.playing) {
+        if (Mine.openCells > 0 || Mine.playing) {
             if (!confirm("本局游戏尚未结束，是否重新开一局?")) {
                 return;
             }
