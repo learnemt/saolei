@@ -356,7 +356,7 @@ function init(banner, row, col, min, max) {
     Mine.onGameOver = function () {
         clearInterval(t);
     }
-    Mine.$("reset").onclick = null;
+   // Mine.$("reset").onclick = null;
 }
 window.onload = function () {
     let myContainer = document.getElementById("lattice");
