@@ -1,45 +1,37 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title></title>
+    <title>扫雷</title>
     <meta charset="utf-8" />
     <link href="css/index.css" rel="stylesheet" />
-    <link rel="shortcut icon" href="images/扫雷.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/logo.ico" type="image/x-icon" />
 </head>
 
 <body>
     <div id="app">
-        <div>
-            <h2 id="GameTitle">扫雷</h2>
-            <div id="djsl"></div>
-            <div class="Explain">
-                <input type="button" id="start" class="jian" value="开始游戏" />
-                <!-- <input type="button" value="重新再来" id="reset" /> -->
-            </div>
-            <div>
-                <b>本局雷数：<u id="minecount">0</u>个,</b>
-                <b>标记数<u id="marks">0</u>个,</b>
-                <b>时间：<span id="second">0</span>s</b>
-            </div>
-            <div id="popup">
-                <label>级别选择：</label>
-                <input type="radio" id="level_1" value="5" name="level"  />
-                <label for="level_1" title="5*5">初级</label>
-                <input type="radio" id="level_2" value="9" name="level" />
-                <label for="level_2" title="9*9">中级</label>
-                <input type="radio" id="level_3" value="20" name="level" />    
-                <label for="level_3" title="13*13">高级</label>     
-                <select id="set">
-                    <option value="0" selected>默认</option>
-                    <option value="1">地雷</option>
-                </select>
-            </div>
-        </div>
-        <table style="border: 1px solid rgb(138, 138, 138);">
-            <tbody id="lattice"></tbody>
+        <table id="lattice">
         </table>
+        <ul>
+            <li>
+                <strong id="minecount">0</strong>个<br><strong id="second">0</strong>秒
+            </li>
+            <li>
+                <input class="radio-btn" type="button" value="简易" data-value="5">
+                <input class="radio-btn" type="button" value="中等" data-value="9">
+                <input class="radio-btn" type="button" value="困难" data-value="13">
+            </li>
+            <li>
+                <!-- <input type="button" id="setting" value="设置" /> -->
+                <!-- <a href="/README.md"><input type="button" value="readme" id="" /></a> -->
+                <input type="button" id="start" value="开始游戏" />
+                <input type="button" value="重新再来" id="reset" />
+                <input type="button" id="setting" value="设置" />
+            </li>
+        </ul>
     </div>
     <script src="scripts/jq.js"></script>
     <script src="scripts/index.js"></script>

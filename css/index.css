@@ -1,68 +1,107 @@
-
-* {
-    padding: 0;
-    margin: 0;
-    font-family: "微软雅黑";
+#app{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
-#app {
-    margin: 0 auto;
+
+#lattice {
+    border-collapse: separate;
+    border-spacing: 2px;
+    margin: 10px;
     text-align: center;
-    position: relative;
-    /* background-color: #E6E7E8; */
-}
-#GameTitle {
-    padding: 20px 0 20px 28px;
-    color: #39c5bb;
-    background: url(../images/logo.png) no-repeat 50%;
-}
-.Explain {
-    line-height: 30px;
 }
 
-#popup {
-    /* background: #E6E7E8; */
-    box-shadow: 0px 15px 10px -15px #ccc;
+ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+ul li{
+    margin: 10px 0 20px 0;
+}
+input{
+    display:block;
+}
+.radio-btn {
+    /* 你的样式 */
+    border: 0 solid white;
+    cursor: pointer;
+    background-color: white;
 }
 
-table {
-    margin: 50px auto;
+.radio-btn.selected {
+    /* 选中状态的样式 */
+    border: 1px solid;
 }
 
 td {
-    background: #ccc;
+    margin: 5px;
+    background-color: #babdb6;
     width: 30px;
     height: 30px;
-    border: 1px outset #aaa;
+    /* 这行不要可以开启物理外挂 */
+    border: 1px solid #babdb6;
+    border-radius: 2px;
     cursor: pointer;
 }
 
+td:hover {
+    background-color: #dededc;
+}
+
 #lattice td.number {
-    background: #E6E7E8;
-    border: 1px solid #666;
+    font-size: 20px;
+    background-color: #E6E7E8;
 }
+
 #lattice td.redFlag {
-    background: url(../images/redFlag.png) no-repeat center;
+    background: #E6E7E8 url(images/redFlag.png) no-repeat center;
 }
+
 #lattice td.flagOk {
-    background: url(../images/flagOk.png) no-repeat center;
+    background: url(/images/flagOk.png) no-repeat center;
 }
+
 #lattice td.flagError {
-    background: url(../images/flagError.png) no-repeat center;
+    background: url(/images/flagError.png) no-repeat center;
 }
+
 #lattice td.mine {
-    background: url(../images/mine.png) no-repeat center;
- /* border: 1px solid blue; */
+    background: url(/images/mine.png) no-repeat center;
 }
+
 #lattice td.mine2 {
-    background: url(../images/mine2.png) no-repeat center;
-    background-color:#500c0c;
+    background: #500c0c url(/images/mine2.png) no-repeat center;
 }
+
 #lattice td.mine3 {
-    background: url(../images/mine3.png) no-repeat center;
+    background: url(/images/mine3.png) no-repeat center;
 }
+
 #lattice td.qmError {
-    background: url(../images/qmError.png) no-repeat center;
+    background: url(/images/qmError.png) no-repeat center;
 }
+
 #lattice td.qm {
-    background: url(../images/qm.png) no-repeat center;
+    background: url(/images/qm.png) no-repeat center;
+}
+
+.scaleIn {
+    animation: scaleIn 1s ease-in-out;
+}
+
+@keyframes scaleIn {
+    0% {
+        opacity: 0;
+        /* 还可以添加其他属性，比如透明度 */
+        transform: scale(0.5);
+        /* 初始状态缩小到一半 */
+    }
+
+    100% {
+        opacity: 1;
+        /* 结束时完全可见 */
+        transform: scale(1);
+        /* 结束时放大到正常大小 */
+    }
 }
