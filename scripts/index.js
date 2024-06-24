@@ -25,8 +25,6 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.winSeesion = 0;
     this.loseSeesion = 0;
     this.sw = false;
-    this.isLocalGameData = false; //保存游戏数据到本地
-    this.isQm = false; //❓使用问号
 }
 Sweep.prototype = {
     constructor: Sweep,
@@ -109,26 +107,37 @@ Sweep.prototype = {
                 }
                 this.cells[i][j] = number;
                 var td = this.$("mine_" + i + "_" + j);
-                let c = ['#7c85c1', '#2f6e19', '#af2828', '#f38b00', '#a074c4'];
-                switch (number) {
-                    case 1:
-                        td.style.color = c[number - 1]
-                        break;
-                    case 2:
-                        td.style.color = c[number - 1]
-                        break;
-                    case 3:
-                        td.style.color = c[number - 1]
-                        break;
-                    case 4:
-                        td.style.color = c[number - 1]
-                        break;
-                    case 5:
-                        td.style.color = c[number - 1]
-                        break;
-                    default:
-                        //td.style.color = "black"
-                        break;
+                if (JSON.parse(localStorage.getItem("isColor"))) {
+                    let c = ['#7c85c1', '#2f6e19', '#af2828', '#f38b00', '#a074c4', '#0099FF', '#f2bdbdfa', '#787171'];
+                    switch (number) {
+                        case 1:
+                            td.style.color = c[number - 1];
+                            break;
+                        case 2:
+                            td.style.color = c[number - 1];
+                            break;
+                        case 3:
+                            td.style.color = c[number - 1];
+                            break;
+                        case 4:
+                            td.style.color = c[number - 1];
+                            break;
+                        case 5:
+                            td.style.color = c[number - 1];
+                            break;
+                        case 6:
+                            td.style.color = c[number - 1];
+                            break;
+                        case 7:
+                            td.style.color = c[number - 1];
+                            break;
+                        case 8:
+                            td.style.color = c[number - 1];
+                            break;
+                        default:
+                            td.style.color = "black";
+                            break;
+                    }
                 }
             }
         }
@@ -196,7 +205,7 @@ Sweep.prototype = {
             }
         }
     },
-    mouseCellsShow: function () {
+    mouseCellsShow: function (reset = false) {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var self = this, num = 0;// 优化开局点击是雷的游戏体验
@@ -206,44 +215,81 @@ Sweep.prototype = {
                         //console.warn(this)
                         if (e.button == 0) {//左键
                             var number = self.cells[row][col];
-                            if (this.className == "redFlag" || this.className == "qm") {
-                                return;
-                            }
-                            if (number == 9) {
-                                num += 1;
-                                if (num == 1) {
-                                    console.log(`这把第${num}次点雷，为了你的体验，已重新设置...`);
-                                    self.initCells();
-                                    self.setMines();
-                                    self.setFigures();
-                                    while (self.cells[row][col] == 9) {
+                            if ('ontouchstart' in document.documentElement) {
+                                if (this.className == "scaleIn") {
+                                    if (self.markMines == self.mines) return;
+                                    this.className = "redFlag";
+                                    self.markMines++;
+                                } else {
+                                    this.className = "scaleIn";
+                                    self.markMines--;
+                                    if (number == 9) {
+                                        num += 1;
+                                        if (num == 1 && !reset) {
+                                            alert(`这把第${num}次点雷，为了你的体验，已重新设置...`);
+                                            self.initCells();
+                                            self.setMines();
+                                            self.setFigures();
+                                            while (self.cells[row][col] == 9) {
+                                                self.initCells();
+                                                self.setMines();
+                                                self.setFigures();
+                                            }
+                                            self.openNumbercells(row, col, self.cells[row][col]);
+                                            //num = 0;
+                                        } else {
+                                            this.className = "fail"
+                                            self.winInfo(false, '你输了');
+                                        }
+    
+                                    } else {
+                                        num += 1;
+                                        self.openNumbercells(row, col, number);
+                                    }
+                                }
+                                if (self.onmarkMine != null) {
+                                    self.onmarkMine(self.mines - self.markMines);
+                                }
+                            } else {
+                                if (this.className == "redFlag" || this.className == "qm") {
+                                    return;
+                                }
+                                if (number == 9) {
+                                    num += 1;
+                                    if (num == 1 && !reset) {
+                                        console.log(`这把第${num}次点雷，为了你的体验，已重新设置...`);
                                         self.initCells();
                                         self.setMines();
                                         self.setFigures();
+                                        while (self.cells[row][col] == 9) {
+                                            self.initCells();
+                                            self.setMines();
+                                            self.setFigures();
+                                        }
+                                        self.openNumbercells(row, col, self.cells[row][col]);
+                                        //num = 0;
+                                    } else {
+                                        this.className = "fail"
+                                        self.winInfo(false, '你输了');
                                     }
-                                    self.openNumbercells(row, col, self.cells[row][col]);
-                                    //num = 0;
-                                } else {
-                                    this.className = "fail"
-                                    self.winRate(false, '你输了');
-                                }
 
-                            } else {
-                                num += 1;
-                                self.openNumbercells(row, col, number);
+                                } else {
+                                    num += 1;
+                                    self.openNumbercells(row, col, number);
+                                }
                             }
                         } else if (e.button == 2) {
                             if (this.className == "scaleIn") {
                                 if (self.markMines == self.mines) return;
                                 this.className = "redFlag";
                                 self.markMines++;
-                            } else if (this.className == "redFlag" && self.isQm) {
+                            } else if (this.className == "redFlag" && JSON.parse(localStorage.getItem("isQm"))) {
                                 this.className = "qm";
                                 self.markMines--;
-                            } else if(this.className =="redFlag"){
+                            } else if (this.className == "redFlag") {
                                 this.className = "scaleIn";
                                 self.markMines--;
-                            }else{
+                            } else {
                                 this.className = "scaleIn";
                             }
                             if (self.onmarkMine != null) {
@@ -266,7 +312,7 @@ Sweep.prototype = {
             this.openNoNumbercells(i, j);
         }
         if (this.openCells + this.mines == this.rows * this.cols) {
-            this.winRate(true, '你赢了');
+            this.winInfo(true, '你赢了');
         }
     },
     openNoNumbercells: function (row, col) { //打开自己及周围空格
@@ -306,45 +352,42 @@ Sweep.prototype = {
             this.onGameOver();
         }
         this.count = this.winSeesion + this.loseSeesion
-        if (this.isLocalGameData) {
+        if (JSON.parse(localStorage.getItem("isLocalGameData"))) {
             var key = "myData";
             if (!localStorage.getItem(key)) {
                 let data = {};
-                data.level1 = [];
-                data.level2 = [];
-                data.level3 = [];
+                data.level1 = data.level2 = data.level3 = data.level4 = [];
                 localStorage.setItem(key, JSON.stringify(data));
             } var storedObject = localStorage.getItem(key);
             if (storedObject) {
                 var data = JSON.parse(storedObject);
-                var ta = [this.gameState.isWin, this.mines, this.$("second").innerText, this.formatDate(), this.cells]
+                var ta = [this.gameState.isWin, this.mines, this.$("second").innerText, this.formatDate(), this.cells];
                 switch (this.lv) {
-                    case "简易":
-                        data.level1.push(ta)
-                        localStorage.setItem(key, JSON.stringify(data))
+                    case "初级":
+                        data.level1.push(ta);
                         break;
-                    case "中等":
-                        data.level2.push(ta)
-                        localStorage.setItem(key, JSON.stringify(data))
+                    case "中级":
+                        data.level2.push(ta);
                         break;
-                    case "困难":
-                        data.level3.push(ta)
-                        localStorage.setItem(key, JSON.stringify(data))
+                    case "高级":
+                        data.level3.push(ta);
                         break;
                     default:
+                        data.level4.push(ta);
                         break;
                 }
+                localStorage.setItem(key, JSON.stringify(data));
                 console.log(data);
             }
         }
-        console.group(`第${this.count}局”${this.lv}“战报概括。`)
-        console.group("详情")
+        console.group(`第${this.count}局“${this.lv}”战报概括。`);
+        console.group("对局数据");
         console.info(this.cells);
-        console.groupEnd("详情");
+        console.groupEnd("对局数据");
         console.log(`${msg}！目前胜率为：${this.rate}%\n本局雷数：${this.mines}个，所用时间：${this.$("second").innerText}秒\n成功标记：${this.wMark}枚，标错数量：${this.lMark}枚\n标了${this.markMines}枚，还剩${this.mines - this.markMines}枚。赢${this.winSeesion}次，输${this.loseSeesion}次`);
         console.groupEnd();
     },
-    winRate: function (isWin, msg = '') {
+    winInfo: function (isWin, msg = '') {
         if (isWin)
             this.winSeesion++;
         else
@@ -358,11 +401,10 @@ Sweep.prototype = {
         this.playing = false;
         this.end(msg);
     },
-    play: function (sw = false, cells = null) {
+    play: function (sw = false, reset, cells = null) {
         this.playing = true; //进行
         this.markMines = 0;
-        this.sw = this.sw ?? sw;
-        this.isLocalGameData = JSON.parse(localStorage.getItem("isLocalGameData")) ?? this.isLocalGameData;
+        this.sw = sw ?? this.sw;
         this.wMark = 0;
         this.lMark = 0;
         this.openCells = 0;
@@ -370,27 +412,32 @@ Sweep.prototype = {
         this.hideAll();
         if (cells != null) {
             this.cells = cells;
+        } else if (this.lv == "自定义" || this.lv == "铺满") {
+            this.initCells();
+            this.mines = this.max;
+            this.setMines();
+            this.setFigures();
         } else {
             this.initCells();
             this.mines = this.getRandom(this.min, this.max);
             this.setMines();
             this.setFigures();
         }
-        this.mouseCellsShow();
+        this.mouseCellsShow(reset);
     }
 }
 $(() => {
     var myContainer = $("#lattice"),
         levels = document.querySelectorAll('.radio-btn');
-    function go(sw, cells) {
-        if (Mine.playing) {
+    function go(sw, reset, cells) {
+        if (Mine && Mine.playing) {
             // if (!confirm("本局游戏尚未结束，是否重新开一局?")) {
             //     return;
             // }
             return;
         }
         s = 0;
-        Mine.play(sw, cells);
+        Mine.play(sw, reset, cells);
         $("#minecount").text(Mine.mines);
         t = setInterval(function () {
             s++;
@@ -402,32 +449,33 @@ $(() => {
         $("#minecount").text("0")
         $("#second").text("0")
         Mine.draw();
-        $("#start").click(() => {
-            go();
-        });
-        $("#reset").click(() => {
-            go(true, Mine.cells)
-
-        });
         Mine.onmarkMine = function (count) {
             $("#minecount").text(count);
         }
         Mine.onGameOver = function () {
             clearInterval(t);
         }
+        $("#start").click(() => {
+            go();
+        });
+        $("#reset").click(() => {
+            go(true, true, Mine.cells)
+
+        });
     }
 
-    if (!localStorage.getItem("isQm") || !localStorage.getItem("isLocalGameData")) {
+    if (!localStorage.getItem("isQm") || !localStorage.getItem("isLocalGameData") || !localStorage.getItem("isColor")) {
         let set = {
             "isQm": false,
-            "isLocalGameData": false
+            "isLocalGameData": false,
+            "isColor": true
         }
         for (let key in set) {
             localStorage.setItem(key, set[key])
         }
     }
     levels.forEach(function (btn, index) {
-        let c = ["green", "blue", "red"]
+        let c = ["green", "blue", "orange", "red"]
         btn.style.color = c[index];
         btn.addEventListener('click', function () {
             if (Mine && Mine.playing) {
@@ -440,13 +488,30 @@ $(() => {
             // 设置当前按钮为“选中”状态
             this.classList.add('selected');
             if (this.classList.contains("selected")) {
-                var min = parseInt(this.dataset.value);
-                var max = min + Math.ceil((min * min * 0.1));
-                init(this.value, myContainer, min, min, min, max);
+                if (this.value == "自定义") {
+                    let row = prompt("请输入行数：");
+                    if (row) {
+                        let col = prompt("请输入列数：");
+                        let mines = parseInt(prompt("请输入雷数："));
+                        init(this.value, myContainer, row, col, 0, mines);
+                    }
+
+                } else if (this.value == "铺满") {
+                    let row = Math.floor(document.documentElement.clientHeight / 37),
+                        col = Math.floor(document.documentElement.clientWidth / 33),
+                        mines = row + Math.ceil((row * col * 0.1));
+                    init(this.value, myContainer, row, col, 0, mines);
+                } else {
+                    let min = parseInt(this.dataset.value);
+                    let max = min + Math.ceil((min * min * 0.1));
+                    init(this.value, myContainer, min, min, min, max);
+                }
                 console.clear();
             }
+            console.log(index);
         });
     });
+
     myContainer.contextmenu(() => {
         return false;
     });
