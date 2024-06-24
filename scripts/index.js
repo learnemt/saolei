@@ -257,7 +257,7 @@ Sweep.prototype = {
                                 if (number == 9) {
                                     num += 1;
                                     if (num == 1 && !reset) {
-                                        console.log(`这把第${num}次点雷，为了你的体验，已重新设置...`);
+                                        alert(`这把第${num}次点雷，为了你的体验，已重新设置...`);
                                         self.initCells();
                                         self.setMines();
                                         self.setFigures();
