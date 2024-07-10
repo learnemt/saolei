@@ -1,4 +1,4 @@
-var Mine = null, t = null, s;
+var Mine = null;
 function Sweep(lv, Container, rows, cols, min, max) {
     this.lv = lv;
     this.gameContainer = Container;
@@ -12,6 +12,7 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.openCells = 0; //打开格子数
     this.onmarkMine = null; //标记地雷操作的回调函数
     this.onGameOver = null; //准备游戏结束时的回调函数
+    this.onReset = null;
     this.playing = false;
     this.wMark = 0; //成功排雷数
     this.lMark = 0; //失败排雷数
@@ -200,7 +201,7 @@ Sweep.prototype = {
             delay += 100; // 例如，每行之间延迟500毫秒  
             for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
-                td.className = "scaleIn";
+                td.className = "scaleIn";//调整动画效果，去除className scaleIn
                 td.innerText = "";
             }
         }
@@ -226,10 +227,7 @@ Sweep.prototype = {
                                     if (number == 9) {
                                         num += 1;
                                         if (num == 1 && !reset) {
-                                            alert(`这把第${num}次点雷，为了你的体验，已重新设置...`);
-                                            self.initCells();
-                                            self.setMines();
-                                            self.setFigures();
+                                            alert(`这把第${num}次点雷，为了你的体验，已更新对局...`);
                                             while (self.cells[row][col] == 9) {
                                                 self.initCells();
                                                 self.setMines();
@@ -241,7 +239,7 @@ Sweep.prototype = {
                                             this.className = "fail"
                                             self.winInfo(false, '你输了');
                                         }
-    
+
                                     } else {
                                         num += 1;
                                         self.openNumbercells(row, col, number);
@@ -347,11 +345,13 @@ Sweep.prototype = {
         }
         else return `${year}-${month}-${day}`;
     },
-    end: function (msg) {
+    winInfo: function (isWin, msg = '') {
+        alert(msg);
+        if (isWin) this.winSeesion++;
+        else this.loseSeesion++;
         if (this.onGameOver != null) {
             this.onGameOver();
         }
-        this.count = this.winSeesion + this.loseSeesion
         if (JSON.parse(localStorage.getItem("isLocalGameData"))) {
             var key = "myData";
             if (!localStorage.getItem(key)) {
@@ -380,26 +380,22 @@ Sweep.prototype = {
                 console.log(data);
             }
         }
+        this.playing = false;
+        this.gameState.isWin = isWin;
+        this.gameState.currentState = msg;
+        this.count = this.winSeesion + this.loseSeesion
+        this.rate = Math.floor(this.winSeesion / (this.winSeesion + this.loseSeesion) * 100);
+        this.showAll();
+        this.removeMouse();
         console.group(`第${this.count}局“${this.lv}”战报概括。`);
         console.group("对局数据");
         console.info(this.cells);
         console.groupEnd("对局数据");
         console.log(`${msg}！目前胜率为：${this.rate}%\n本局雷数：${this.mines}个，所用时间：${this.$("second").innerText}秒\n成功标记：${this.wMark}枚，标错数量：${this.lMark}枚\n标了${this.markMines}枚，还剩${this.mines - this.markMines}枚。赢${this.winSeesion}次，输${this.loseSeesion}次`);
         console.groupEnd();
-    },
-    winInfo: function (isWin, msg = '') {
-        if (isWin)
-            this.winSeesion++;
-        else
-            this.loseSeesion++;
-        this.rate = Math.floor(this.winSeesion / (this.winSeesion + this.loseSeesion) * 100);
-        this.gameState.isWin = isWin;
-        this.gameState.currentState = msg;
-        alert(msg);
-        this.showAll();
-        this.removeMouse();
-        this.playing = false;
-        this.end(msg);
+        if (this.onReset != null&&!isWin&&JSON.parse(localStorage.getItem("isEnbleReset"))) {
+            this.onReset();
+        }
     },
     play: function (sw = false, reset, cells = null) {
         this.playing = true; //进行
@@ -428,22 +424,27 @@ Sweep.prototype = {
 }
 $(() => {
     var myContainer = $("#lattice"),
-        levels = document.querySelectorAll('.radio-btn');
-    function go(sw, reset, cells) {
+        levels = document.querySelectorAll('.radio-btn'), t, s;
+
+    function go(r) {
+        if (Mine == null || Mine == undefined) {
+            alert("请先选择难度级别再开始！");
+            return false;
+        }
         if (Mine && Mine.playing) {
-            // if (!confirm("本局游戏尚未结束，是否重新开一局?")) {
-            //     return;
-            // }
-            return;
+            alert("本局游戏尚未结束！");
+            return false;
         }
         s = 0;
-        Mine.play(sw, reset, cells);
+        if (r) Mine.play(true, true, Mine.cells);
+        else Mine.play();
         $("#minecount").text(Mine.mines);
         t = setInterval(function () {
             s++;
             $("#second").text(s);
         }, 1000);
     }
+
     function init(lv, Container, row, col, min, max) {
         Mine = new Sweep(lv, Container, row, col, min, max);
         $("#minecount").text("0")
@@ -455,20 +456,21 @@ $(() => {
         Mine.onGameOver = function () {
             clearInterval(t);
         }
-        $("#start").click(() => {
-            go();
-        });
-        $("#reset").click(() => {
-            go(true, true, Mine.cells)
-
-        });
+        Mine.onReset = () => {
+            if (confirm("本局游戏已经结束，是否重新再来?")) {
+                go(1);
+            }
+        }
     }
-
-    if (!localStorage.getItem("isQm") || !localStorage.getItem("isLocalGameData") || !localStorage.getItem("isColor")) {
+    $("#start").click(() => {
+        go();
+    });
+    if (!localStorage.getItem("isQm") || !localStorage.getItem("isLocalGameData") || !localStorage.getItem("isColor")|| !localStorage.getItem("isEnbleReset")) {
         let set = {
             "isQm": false,
             "isLocalGameData": false,
-            "isColor": true
+            "isColor": true,
+            "isEnbleReset":true
         }
         for (let key in set) {
             localStorage.setItem(key, set[key])
@@ -495,20 +497,19 @@ $(() => {
                         let mines = parseInt(prompt("请输入雷数："));
                         init(this.value, myContainer, row, col, 0, mines);
                     }
-
                 } else if (this.value == "铺满") {
-                    let row = Math.floor(document.documentElement.clientHeight / 37),
+                    let row = Math.floor(document.documentElement.clientHeight / 39),
                         col = Math.floor(document.documentElement.clientWidth / 33),
                         mines = row + Math.ceil((row * col * 0.1));
                     init(this.value, myContainer, row, col, 0, mines);
                 } else {
-                    let min = parseInt(this.dataset.value);
-                    let max = min + Math.ceil((min * min * 0.1));
+                    let min = parseInt(this.dataset.value),
+                        max = min + Math.ceil((min * min * 0.1));
                     init(this.value, myContainer, min, min, min, max);
                 }
                 console.clear();
             }
-            console.log(index);
+            //console.log(index);
         });
     });
 

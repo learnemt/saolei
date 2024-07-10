@@ -60,14 +60,14 @@ td:hover {
 
 @keyframes scaleIn {
     0% {
-        opacity: 0;
+        /* opacity: 0; */
         /* 还可以添加其他属性，比如透明度 */
         transform: scale(0.5);
         /* 初始状态缩小到一半 */
     }
 
     100% {
-        opacity: 1;
+        /* opacity: 1; */
         /* 结束时完全可见 */
         transform: scale(1);
         /* 结束时放大到正常大小 */
