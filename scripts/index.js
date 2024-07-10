@@ -361,7 +361,7 @@ Sweep.prototype = {
             } var storedObject = localStorage.getItem(key);
             if (storedObject) {
                 var data = JSON.parse(storedObject);
-                var ta = [this.gameState.isWin, this.mines, this.$("second").innerText, this.formatDate(), this.cells];
+                var ta = [isWin, this.mines, this.$("second").innerText, this.formatDate(), this.cells];
                 switch (this.lv) {
                     case "初级":
                         data.level1.push(ta);
