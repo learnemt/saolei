@@ -107,48 +107,61 @@ Sweep.prototype = {
                     number++;
                 }
                 this.cells[i][j] = number;
+            }
+        }
+    },
+    setColor(td, number) {
+        if (JSON.parse(localStorage.getItem("isColor"))) {
+            let c = ['#7c85c1', '#2f6e19', '#af2828', '#f38b00', '#a074c4', '#0099FF', '#f2bdbdfa', '#787171'];
+            switch (number) {
+                case 1:
+                    td.style.color = c[number - 1];
+                    break;
+                case 2:
+                    td.style.color = c[number - 1];
+                    break;
+                case 3:
+                    td.style.color = c[number - 1];
+                    break;
+                case 4:
+                    td.style.color = c[number - 1];
+                    break;
+                case 5:
+                    td.style.color = c[number - 1];
+                    break;
+                case 6:
+                    td.style.color = c[number - 1];
+                    break;
+                case 7:
+                    td.style.color = c[number - 1];
+                    break;
+                case 8:
+                    td.style.color = c[number - 1];
+                    break;
+                default:
+                    break;
+            }
+        }
+    },
+    fastPass: function () {
+        for (var i = 0; i < this.rows; i++) {
+            for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
-                if (JSON.parse(localStorage.getItem("isColor"))) {
-                    let c = ['#7c85c1', '#2f6e19', '#af2828', '#f38b00', '#a074c4', '#0099FF', '#f2bdbdfa', '#787171'];
-                    switch (number) {
-                        case 1:
-                            td.style.color = c[number - 1];
-                            break;
-                        case 2:
-                            td.style.color = c[number - 1];
-                            break;
-                        case 3:
-                            td.style.color = c[number - 1];
-                            break;
-                        case 4:
-                            td.style.color = c[number - 1];
-                            break;
-                        case 5:
-                            td.style.color = c[number - 1];
-                            break;
-                        case 6:
-                            td.style.color = c[number - 1];
-                            break;
-                        case 7:
-                            td.style.color = c[number - 1];
-                            break;
-                        case 8:
-                            td.style.color = c[number - 1];
-                            break;
-                        default:
-                            td.style.color = "black";
-                            break;
-                    }
+                var number = this.cells[i][j];
+                if (number == 9) {
+                    if (td.className = "redFlag") continue;
+                    td.className = "redFlag";
                 }
             }
         }
+        this.onGameOver();
     },
     showAll: function () {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
-                var cell = this.cells[i][j];
-                if (cell == 9) {
+                var number = this.cells[i][j];
+                if (number == 9) {
                     if (td.className == "redFlag") {
                         td.className = "flagOk";
                         this.wMark++;
@@ -165,8 +178,9 @@ Sweep.prototype = {
                     if (td.className == "redFlag")
                         this.lMark++;
                     if (this.sw) {
-                        if (cell != 0) {
-                            td.innerText = cell;
+                        this.setColor(td, number);
+                        if (number != 0) {
+                            td.innerText = number;
                         }
                         if (td.className == "redFlag") {
                             td.className = "flagError";
@@ -201,6 +215,7 @@ Sweep.prototype = {
             delay += 100; // 例如，每行之间延迟500毫秒  
             for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
+                td.style.color = "";
                 td.className = "scaleIn";//调整动画效果，去除className scaleIn
                 td.innerText = "";
             }
@@ -301,6 +316,7 @@ Sweep.prototype = {
     },
     openNumbercells: function (i, j, number) {
         var td = this.$("mine_" + i + "_" + j);
+        this.setColor(td, number);
         td.onmousedown = null;
         this.openCells++;
         td.className = "number";
@@ -393,7 +409,7 @@ Sweep.prototype = {
         console.groupEnd("对局数据");
         console.log(`${msg}！目前胜率为：${this.rate}%\n本局雷数：${this.mines}个，所用时间：${this.$("second").innerText}秒\n成功标记：${this.wMark}枚，标错数量：${this.lMark}枚\n标了${this.markMines}枚，还剩${this.mines - this.markMines}枚。赢${this.winSeesion}次，输${this.loseSeesion}次`);
         console.groupEnd();
-        if (this.onReset != null&&!isWin&&JSON.parse(localStorage.getItem("isEnbleReset"))) {
+        if (this.onReset != null && !isWin && JSON.parse(localStorage.getItem("isEnbleReset"))) {
             this.onReset();
         }
     },
@@ -439,10 +455,15 @@ $(() => {
         if (r) Mine.play(true, true, Mine.cells);
         else Mine.play();
         $("#minecount").text(Mine.mines);
+        /*
         t = setInterval(function () {
             s++;
             $("#second").text(s);
         }, 1000);
+        */
+        t = setInterval(function () {
+            $("#second").text((parseFloat($("#second").text())+ 0.1).toFixed(1));
+        }, 100);
     }
 
     function init(lv, Container, row, col, min, max) {
@@ -462,20 +483,42 @@ $(() => {
             }
         }
     }
+
     $("#start").click(() => {
         go();
     });
-    if (!localStorage.getItem("isQm") || !localStorage.getItem("isLocalGameData") || !localStorage.getItem("isColor")|| !localStorage.getItem("isEnbleReset")) {
+
+    $("#stoped").click(() => {
+        if (Mine == null || Mine == undefined) {
+            return false;
+        }
+        if (Mine && Mine.playing) {
+            Mine.playing=false;
+            Mine.onGameOver();
+            Mine.removeMouse();
+            $("#stoped").val("继续游戏");
+        }else{
+            t = setInterval(function () {
+                Mine.playing=true;
+                $("#second").text((parseFloat($("#second").text())+ 0.1).toFixed(1));
+                Mine.mouseCellsShow(1);
+                $("#stoped").val("停止游戏");
+            }, 100);
+        }
+    });
+
+    if (!localStorage.getItem("isQm") || !localStorage.getItem("isLocalGameData") || !localStorage.getItem("isColor") || !localStorage.getItem("isEnbleReset")) {
         let set = {
             "isQm": false,
             "isLocalGameData": false,
             "isColor": true,
-            "isEnbleReset":true
+            "isEnbleReset": true
         }
         for (let key in set) {
             localStorage.setItem(key, set[key])
         }
     }
+    
     levels.forEach(function (btn, index) {
         let c = ["green", "blue", "orange", "red"]
         btn.style.color = c[index];
