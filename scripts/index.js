@@ -14,6 +14,7 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.onGameOver = null; //准备游戏结束时的回调函数
     this.onReset = null;
     this.playing = false;
+    this.pause = false,
     this.wMark = 0; //成功排雷数
     this.lMark = 0; //失败排雷数
     this.gameState = {
@@ -154,6 +155,8 @@ Sweep.prototype = {
                 }
             }
         }
+        this.$("minecount").innerText = "0";
+        //this.mines = 0;
         this.onGameOver();
     },
     showAll: function () {
@@ -462,7 +465,7 @@ $(() => {
         }, 1000);
         */
         t = setInterval(function () {
-            $("#second").text((parseFloat($("#second").text())+ 0.1).toFixed(1));
+            $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
         }, 100);
     }
 
@@ -492,17 +495,19 @@ $(() => {
         if (Mine == null || Mine == undefined) {
             return false;
         }
-        if (Mine && Mine.playing) {
-            Mine.playing=false;
+        if (Mine && !Mine.pause && Mine.playing) {
+            Mine.pause = true;
             Mine.onGameOver();
             Mine.removeMouse();
             $("#stoped").val("继续游戏");
-        }else{
+        }else if(!Mine.playing){
+            alert("游戏已结束或者未开始！");
+        } else {
             t = setInterval(function () {
-                Mine.playing=true;
-                $("#second").text((parseFloat($("#second").text())+ 0.1).toFixed(1));
+                Mine.pause = false;
+                $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
                 Mine.mouseCellsShow(1);
-                $("#stoped").val("停止游戏");
+                $("#stoped").val("暂停游戏");
             }, 100);
         }
     });
@@ -518,7 +523,7 @@ $(() => {
             localStorage.setItem(key, set[key])
         }
     }
-    
+
     levels.forEach(function (btn, index) {
         let c = ["green", "blue", "orange", "red"]
         btn.style.color = c[index];
