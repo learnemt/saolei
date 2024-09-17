@@ -15,7 +15,7 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.onReset = null;
     this.playing = false;
     this.pause = false,
-    this.wMark = 0; //成功排雷数
+        this.wMark = 0; //成功排雷数
     this.lMark = 0; //失败排雷数
     this.gameState = {
         isWin: false,
@@ -145,19 +145,21 @@ Sweep.prototype = {
         }
     },
     fastPass: function () {
-        for (var i = 0; i < this.rows; i++) {
-            for (var j = 0; j < this.cols; j++) {
-                var td = this.$("mine_" + i + "_" + j);
-                var number = this.cells[i][j];
-                if (number == 9) {
-                    if (td.className = "redFlag") continue;
-                    td.className = "redFlag";
+        if (this.playing) {
+            for (var i = 0; i < this.rows; i++) {
+                for (var j = 0; j < this.cols; j++) {
+                    var td = this.$("mine_" + i + "_" + j);
+                    var number = this.cells[i][j];
+                    if (number == 9) {
+                        if (td.className = "redFlag") continue;
+                        td.className = "redFlag";
+                    }
                 }
             }
+            this.$("minecount").innerText = "0";
+            //this.mines = 0;
+            this.onGameOver();
         }
-        this.$("minecount").innerText = "0";
-        //this.mines = 0;
-        this.onGameOver();
     },
     showAll: function () {
         for (var i = 0; i < this.rows; i++) {
@@ -500,7 +502,7 @@ $(() => {
             Mine.onGameOver();
             Mine.removeMouse();
             $("#stoped").val("继续游戏");
-        }else if(!Mine.playing){
+        } else if (!Mine.playing) {
             alert("游戏已结束或者未开始！");
         } else {
             t = setInterval(function () {
