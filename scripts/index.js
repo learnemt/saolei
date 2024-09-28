@@ -206,13 +206,13 @@ Sweep.prototype = {
         td.onmousedown = null;
         this.openCells++;
         td.className = "number";
+        if (this.openCells + this.mines == this.rows * this.cols) {
+            this.winRate(true, 'Won');
+        }
         if (number != 0) {
             td.innerText = number;
         } else {
             this.openNoNumbercells(i, j);
-        }
-        if (this.openCells + this.mines == this.rows * this.cols) {
-            this.winRate(true, 'Won');
         }
     },
     openNoNumbercells: function (row, col) { //打开自己及周围空格
