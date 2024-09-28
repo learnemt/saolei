@@ -1,0 +1,116 @@
+#app {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#lattice {
+    border-collapse: separate;
+    border-spacing: 2px;
+    margin: 10px;
+    text-align: center;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul li {
+    margin: 10px 0 20px 0;
+}
+
+input {
+    display: block;
+}
+#start{
+    background: url("../images/buttons/bt1.jpg") no-repeat center;
+}
+#stoped{
+    background: url("../images/buttons/bt2.jpg") no-repeat center;
+    color: white;
+}
+.radio-btn {
+    /* 你的样式 */
+    border: 0 solid white;
+    cursor: pointer;
+    background-color: white;
+}
+
+.radio-btn.selected {
+    /* 选中状态的样式 */
+    border: 1px solid;
+}
+
+td {
+    margin: 5px;
+    background-color: #babdb6;
+    width: 30px;
+    height: 30px;
+    /* 这行不要可以开启物理外挂 */
+    border: 1px solid #babdb6;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+td:hover {
+    background-color: #dededc;
+}
+
+#lattice td.number {
+    font-size: 20px;
+    background-color: #E6E7E8;
+}
+
+#lattice td.redFlag {
+    background: #E6E7E8 url("../images/redFlag.png") no-repeat center;
+}
+
+#lattice td.flagOk {
+    background: url("../images/flagOk.png") no-repeat center;
+}
+
+#lattice td.flagError {
+    background: url("../images/flagError.png") no-repeat center;
+}
+
+#lattice td.mine {
+    background: url("../images/mine.png") no-repeat center;
+}
+
+#lattice td.mine2 {
+    background: #500c0c url("../images/mine2.png") no-repeat center;
+}
+
+#lattice td.mine3 {
+    background: url("../images/mine3.png") no-repeat center;
+}
+
+#lattice td.qmError {
+    background: url("../images/qmError.png") no-repeat center;
+}
+
+#lattice td.qm {
+    background: url("../images/qm.png") no-repeat center;
+}
+
+.scaleIn {
+    animation: scaleIn 1s ease-in-out;
+}
+
+@keyframes scaleIn {
+    0% {
+        opacity: 0;
+        /* 还可以添加其他属性，比如透明度 */
+        transform: scale(0.5);
+        /* 初始状态缩小到一半 */
+    }
+
+    100% {
+        opacity: 1;
+        /* 结束时完全可见 */
+        transform: scale(1);
+        /* 结束时放大到正常大小 */
+    }
+}
