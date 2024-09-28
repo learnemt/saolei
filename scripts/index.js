@@ -7,7 +7,7 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.cells = null;
     this.min = min;
     this.max = max;
-    this.mines = 0; //雷数
+    this.mines = 0; 
     this.markMines = 0; //已标记旗子数
     this.openCells = 0; //打开格子数
     this.onmarkMine = null; //标记地雷操作的回调函数
@@ -15,12 +15,12 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.onReset = null;
     this.playing = false;
     this.pause = false,
-        this.wMark = 0; //成功排雷数
+    this.wMark = 0; //成功排雷数
     this.lMark = 0; //失败排雷数
     this.gameState = {
         isWin: false,
         msg: "",
-        states: ['EndPage', 'Playing', 'Won', 'Lost', { isplaying: false }]
+        states: ['EndPage', 'Playing', 'Won', 'Lost']
     }
     this.rate = 0; //胜率
     this.count = 0; //场次
@@ -610,4 +610,4 @@ $(() => {
     myContainer.contextmenu(() => {
         return false;
     });
-}); 
+});
