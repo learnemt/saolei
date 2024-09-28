@@ -27,6 +27,7 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.winSeesion = 0;
     this.loseSeesion = 0;
     this.sw = false;
+    this.usec = false;
 }
 Sweep.prototype = {
     constructor: Sweep,
@@ -145,20 +146,30 @@ Sweep.prototype = {
         }
     },
     fastPass: function () {
-        if (this.playing) {
+        if (this.playing && this.markMines == 0) {
             for (var i = 0; i < this.rows; i++) {
                 for (var j = 0; j < this.cols; j++) {
                     var td = this.$("mine_" + i + "_" + j);
                     var number = this.cells[i][j];
                     if (number == 9) {
-                        if (td.className = "redFlag") continue;
                         td.className = "redFlag";
                     }
                 }
             }
             this.$("minecount").innerText = "0";
-            //this.mines = 0;
-            this.onGameOver();
+            this.markMines = this.mines;
+            //this.onGameOver();
+        } else {
+            for (var i = 0; i < this.rows; i++) {
+                for (var j = 0; j < this.cols; j++) {
+                    var td = this.$("mine_" + i + "_" + j);
+                    var number = this.cells[i][j];
+                    if (td.className = "redFlag")
+                        td.className = "scaleIn";
+                }
+            }
+            this.$("minecount").innerText = this.mines;
+            this.markMines = 0;
         }
     },
     showAll: function () {
@@ -325,13 +336,13 @@ Sweep.prototype = {
         td.onmousedown = null;
         this.openCells++;
         td.className = "number";
+        if (this.openCells + this.mines == this.rows * this.cols) {
+            this.winInfo(true, '你赢了');
+        }
         if (number != 0) {
             td.innerText = number;
         } else {
             this.openNoNumbercells(i, j);
-        }
-        if (this.openCells + this.mines == this.rows * this.cols) {
-            this.winInfo(true, '你赢了');
         }
     },
     openNoNumbercells: function (row, col) { //打开自己及周围空格
@@ -418,6 +429,15 @@ Sweep.prototype = {
             this.onReset();
         }
     },
+    overView() {
+        if (this.playing && this.markMines == 0) {
+            this.sw = true;
+            this.showAll();
+            this.removeMouse();
+            this.playing = false;
+            this.onGameOver();
+        } else { console.log("不允许查看") }
+    },
     play: function (sw = false, reset, cells = null) {
         this.playing = true; //进行
         this.markMines = 0;
@@ -466,9 +486,15 @@ $(() => {
             $("#second").text(s);
         }, 1000);
         */
-        t = setInterval(function () {
-            $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
-        }, 100);
+        if (Mine.usec) {
+            t = setInterval(function () {
+                $("#second").text((parseFloat($("#second").text()) + 0.01).toFixed(2));
+            }, 10);
+        } else {
+            t = setInterval(function () {
+                $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
+            }, 100);
+        }
     }
 
     function init(lv, Container, row, col, min, max) {
@@ -505,12 +531,22 @@ $(() => {
         } else if (!Mine.playing) {
             alert("游戏已结束或者未开始！");
         } else {
-            t = setInterval(function () {
-                Mine.pause = false;
-                $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
-                Mine.mouseCellsShow(1);
-                $("#stoped").val("暂停游戏");
-            }, 100);
+            if (Mine.usec) {
+                t = setInterval(function () {
+                    Mine.pause = false;
+                    $("#second").text((parseFloat($("#second").text()) + 0.01).toFixed(2));
+                    Mine.mouseCellsShow(1);
+                    $("#stoped").val("暂停游戏");
+                }, 10);
+            } else {
+                t = setInterval(function () {
+                    Mine.pause = false;
+                    $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
+                    Mine.mouseCellsShow(1);
+                    $("#stoped").val("暂停游戏");
+                }, 100);
+            }
+
         }
     });
 
@@ -525,6 +561,14 @@ $(() => {
             localStorage.setItem(key, set[key])
         }
     }
+
+    // if (Mine == null) {
+    //     console.log(levels[0]);
+    //     levels[0].classList.add('selected');
+    //     let min = 5,
+    //         max = min + Math.ceil((min * min * 0.1));
+    //     init("初级", myContainer, min, min, min, max);
+    // }
 
     levels.forEach(function (btn, index) {
         let c = ["green", "blue", "orange", "red"]
@@ -548,7 +592,7 @@ $(() => {
                         init(this.value, myContainer, row, col, 0, mines);
                     }
                 } else if (this.value == "铺满") {
-                    let row = Math.floor(document.documentElement.clientHeight / 39),
+                    let row = Math.floor(document.documentElement.clientHeight / 36),
                         col = Math.floor(document.documentElement.clientWidth / 33),
                         mines = row + Math.ceil((row * col * 0.1));
                     init(this.value, myContainer, row, col, 0, mines);
