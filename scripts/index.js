@@ -7,7 +7,7 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.cells = null;
     this.min = min;
     this.max = max;
-    this.mines = 0; 
+    this.mines = 0;
     this.markMines = 0; //已标记旗子数
     this.openCells = 0; //打开格子数
     this.onmarkMine = null; //标记地雷操作的回调函数
@@ -15,7 +15,7 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.onReset = null;
     this.playing = false;
     this.pause = false,
-    this.wMark = 0; //成功排雷数
+        this.wMark = 0; //成功排雷数
     this.lMark = 0; //失败排雷数
     this.gameState = {
         isWin: false,
@@ -28,6 +28,7 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.loseSeesion = 0;
     this.sw = false;
     this.usec = false;
+    this.tc = true;
 }
 Sweep.prototype = {
     constructor: Sweep,
@@ -158,19 +159,7 @@ Sweep.prototype = {
             }
             this.$("minecount").innerText = "0";
             this.markMines = this.mines;
-            //this.onGameOver();
-        } else {
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.cols; j++) {
-                    var td = this.$("mine_" + i + "_" + j);
-                    var number = this.cells[i][j];
-                    if (td.className = "redFlag")
-                        td.className = "scaleIn";
-                }
-            }
-            this.$("minecount").innerText = this.mines;
-            this.markMines = 0;
-        }
+        } else console.log("当前状态不被允许");
     },
     showAll: function () {
         for (var i = 0; i < this.rows; i++) {
@@ -286,7 +275,7 @@ Sweep.prototype = {
                                 if (number == 9) {
                                     num += 1;
                                     if (num == 1 && !reset) {
-                                        alert(`这把第${num}次点雷，为了你的体验，已重新设置...`);
+                                        alert(`这把第${num}次点雷，为了你的体验，已更新对局...`);
                                         self.initCells();
                                         self.setMines();
                                         self.setFigures();
@@ -451,12 +440,12 @@ Sweep.prototype = {
             this.cells = cells;
         } else if (this.lv == "自定义" || this.lv == "铺满") {
             this.initCells();
-            this.mines = this.max;
+            //this.mines = this.max;
             this.setMines();
             this.setFigures();
         } else {
             this.initCells();
-            this.mines = this.getRandom(this.min, this.max);
+            //this.mines = this.getRandom(this.min, this.max);
             this.setMines();
             this.setFigures();
         }
@@ -465,6 +454,7 @@ Sweep.prototype = {
 }
 $(() => {
     var myContainer = $("#lattice"),
+        ls = ["isQm","isLocalGameData","isColor","isEnbleReset"],
         levels = document.querySelectorAll('.radio-btn'), t, s;
 
     function go(r) {
@@ -479,7 +469,7 @@ $(() => {
         s = 0;
         if (r) Mine.play(true, true, Mine.cells);
         else Mine.play();
-        $("#minecount").text(Mine.mines);
+        //$("#minecount").text(Mine.mines);
         /*
         t = setInterval(function () {
             s++;
@@ -549,26 +539,21 @@ $(() => {
 
         }
     });
-
-    if (!localStorage.getItem("isQm") || !localStorage.getItem("isLocalGameData") || !localStorage.getItem("isColor") || !localStorage.getItem("isEnbleReset")) {
-        let set = {
-            "isQm": false,
-            "isLocalGameData": false,
-            "isColor": true,
-            "isEnbleReset": true
+    
+    if (Mine == null) {
+        for (const i of ls) {
+            if (!localStorage.getItem(i)) {
+                localStorage.setItem(i, true)
+            }
         }
-        for (let key in set) {
-            localStorage.setItem(key, set[key])
-        }
+        //console.log(levels[0]);
+        levels[0].classList.add('selected');
+        let min = 5,
+            max = min + Math.ceil((min * min * 0.1));
+        init("初级", myContainer, min, min, min, max);
+        Mine.mines = Mine.getRandom(min, max);
+        $("#minecount").text(Mine.mines);
     }
-
-    // if (Mine == null) {
-    //     console.log(levels[0]);
-    //     levels[0].classList.add('selected');
-    //     let min = 5,
-    //         max = min + Math.ceil((min * min * 0.1));
-    //     init("初级", myContainer, min, min, min, max);
-    // }
 
     levels.forEach(function (btn, index) {
         let c = ["green", "blue", "orange", "red"]
@@ -587,20 +572,27 @@ $(() => {
                 if (this.value == "自定义") {
                     let row = prompt("请输入行数：");
                     if (row) {
-                        let col = prompt("请输入列数：");
-                        let mines = parseInt(prompt("请输入雷数："));
+                        let col = prompt("请输入列数："),
+                            mines = parseInt(prompt("请输入雷数："));
                         init(this.value, myContainer, row, col, 0, mines);
+                        Mine.mines = mines;
+                        $("#minecount").text(mines);
                     }
                 } else if (this.value == "铺满") {
                     let row = Math.floor(document.documentElement.clientHeight / 36),
                         col = Math.floor(document.documentElement.clientWidth / 33),
                         mines = row + Math.ceil((row * col * 0.1));
                     init(this.value, myContainer, row, col, 0, mines);
+                    Mine.mines = mines;
+                    $("#minecount").text(mines);
                 } else {
                     let min = parseInt(this.dataset.value),
                         max = min + Math.ceil((min * min * 0.1));
                     init(this.value, myContainer, min, min, min, max);
+                    Mine.mines = Mine.getRandom(min, max);
+                    $("#minecount").text(Mine.mines);
                 }
+                Mine
                 console.clear();
             }
             //console.log(index);
