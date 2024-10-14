@@ -15,20 +15,20 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.onReset = null;
     this.playing = false;
     this.pause = false,
-        this.wMark = 0; //成功排雷数
+    this.wMark = 0; //成功排雷数
     this.lMark = 0; //失败排雷数
     this.gameState = {
         isWin: false,
         msg: "",
-        states: ['EndPage', 'Playing', 'Won', 'Lost']
+        states: ['EndPage', 'Playing', 'Win', 'Lost']
     }
     this.rate = 0; //胜率
     this.count = 0; //场次
     this.winSeesion = 0;
     this.loseSeesion = 0;
-    this.sw = false;
-    this.usec = false;
-    this.tc = true;
+    this.usesl = false;
+    this.usems = false;
+    this.usetc = true;
 }
 Sweep.prototype = {
     constructor: Sweep,
@@ -182,7 +182,7 @@ Sweep.prototype = {
                 else {
                     if (td.className == "redFlag")
                         this.lMark++;
-                    if (this.sw) {
+                    if (this.usesl) {
                         this.setColor(td, number);
                         if (number != 0) {
                             td.innerText = number;
@@ -398,7 +398,7 @@ Sweep.prototype = {
                         break;
                 }
                 localStorage.setItem(key, JSON.stringify(data));
-                console.log(data);
+                //xzconsole.log(data);
             }
         }
         this.playing = false;
@@ -420,7 +420,7 @@ Sweep.prototype = {
     },
     overView() {
         if (this.playing && this.markMines == 0) {
-            this.sw = true;
+            this.usesl = true;
             this.showAll();
             this.removeMouse();
             this.playing = false;
@@ -430,7 +430,7 @@ Sweep.prototype = {
     play: function (sw = false, reset, cells = null) {
         this.playing = true; //进行
         this.markMines = 0;
-        this.sw = sw ?? this.sw;
+        this.usesl = sw ?? this.usesl;
         this.wMark = 0;
         this.lMark = 0;
         this.openCells = 0;
@@ -476,7 +476,7 @@ $(() => {
             $("#second").text(s);
         }, 1000);
         */
-        if (Mine.usec) {
+        if (Mine.usems) {
             t = setInterval(function () {
                 $("#second").text((parseFloat($("#second").text()) + 0.01).toFixed(2));
             }, 10);
@@ -504,9 +504,13 @@ $(() => {
             }
         }
     }
-
+    
     $("#start").click(() => {
         go();
+    });
+    
+    $("#restart").click(() => {
+        go(1);
     });
 
     $("#stoped").click(() => {
@@ -521,7 +525,7 @@ $(() => {
         } else if (!Mine.playing) {
             alert("游戏已结束或者未开始！");
         } else {
-            if (Mine.usec) {
+            if (Mine.usems) {
                 t = setInterval(function () {
                     Mine.pause = false;
                     $("#second").text((parseFloat($("#second").text()) + 0.01).toFixed(2));
@@ -540,6 +544,11 @@ $(() => {
         }
     });
     
+    $("#light").click(()=>{
+        $("body").toggleClass("black");
+        $("#topbaner").toggleClass("black");
+    })
+
     if (Mine == null) {
         for (const i of ls) {
             if (!localStorage.getItem(i)) {
@@ -579,7 +588,7 @@ $(() => {
                         $("#minecount").text(mines);
                     }
                 } else if (this.value == "铺满") {
-                    let row = Math.floor(document.documentElement.clientHeight / 36),
+                    let row = Math.floor(document.documentElement.clientHeight / 42),
                         col = Math.floor(document.documentElement.clientWidth / 33),
                         mines = row + Math.ceil((row * col * 0.1));
                     init(this.value, myContainer, row, col, 0, mines);
