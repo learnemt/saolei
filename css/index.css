@@ -3,6 +3,7 @@ ul{
     margin: 0 auto;
     list-style: none;
 }
+
 #popup{
     position: absolute;
     width: 20px;

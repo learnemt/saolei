@@ -7,9 +7,12 @@
     <title>扫雷</title>
     <link href="css/index.css" rel="stylesheet" />
     <link rel="shortcut icon" href="../sweep/images/logo/logo.ico" type="image/x-icon" />
-    <style>
-
-    </style>
+    <link rel="stylesheet" href="css/skin.css" id="alternate" disabled>
+<script>
+    function openWin(){
+            window.open('/help.html','_blank','left=350,top=100,toolbar=yes,location=0,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=no,copyhistory=yes,width=800,height=600');
+        }
+</script>
 </head>
 
 <body>
@@ -33,13 +36,22 @@
                 <input type="button" id="restart" value="重新开始" />
                 <input type="button" id="stoped" value="暂停游戏" />
                 <!-- <input type="button" id="setting" value="   设 置   " /> -->
-                <div for="light">关灯
-                    <input type="checkbox" name="light" id="light">
-                </div>
+                
+            </div>
+            <div>
+                <label for="night">夜间
+                    <input type="checkbox" name="night" id="night">
+                </label>
+                <label for="skin">切换主题
+                    <input type="checkbox" name="skin" id="skin">
+                </label>
+                <label for="help">
+                    <strong onclick="openWin();">帮助</strong>
+                </label>
             </div>
         </div>
         <div id="game_box">
-            <table id="lattice">
+            <table id="lattice" class="custom-cursor">
             </table>
         </div>
     </div>

@@ -15,7 +15,7 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.onReset = null;
     this.playing = false;
     this.pause = false,
-    this.wMark = 0; //成功排雷数
+        this.wMark = 0; //成功排雷数
     this.lMark = 0; //失败排雷数
     this.gameState = {
         isWin: false,
@@ -26,8 +26,8 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.count = 0; //场次
     this.winSeesion = 0;
     this.loseSeesion = 0;
+    this.usems = -1;
     this.usesl = false;
-    this.usems = false;
     this.usetc = true;
 }
 Sweep.prototype = {
@@ -377,7 +377,7 @@ Sweep.prototype = {
             var key = "myData";
             if (!localStorage.getItem(key)) {
                 let data = {};
-                data.level1 = data.level2 = data.level3 = data.level4 = [];
+                data.level0 = data.level1 = data.level2 = data.level3 = [];
                 localStorage.setItem(key, JSON.stringify(data));
             } var storedObject = localStorage.getItem(key);
             if (storedObject) {
@@ -385,16 +385,16 @@ Sweep.prototype = {
                 var ta = [isWin, this.mines, this.$("second").innerText, this.formatDate(), this.cells];
                 switch (this.lv) {
                     case "初级":
-                        data.level1.push(ta);
+                        data.level0.push(ta);
                         break;
                     case "中级":
-                        data.level2.push(ta);
+                        data.level1.push(ta);
                         break;
                     case "高级":
-                        data.level3.push(ta);
+                        data.level2.push(ta);
                         break;
                     default:
-                        data.level4.push(ta);
+                        data.level3.push(ta);
                         break;
                 }
                 localStorage.setItem(key, JSON.stringify(data));
@@ -427,10 +427,11 @@ Sweep.prototype = {
             this.onGameOver();
         } else { console.log("不允许查看") }
     },
-    play: function (sw = false, reset, cells = null) {
+    play: function (sl = false, reset, cells = null) {
         this.playing = true; //进行
         this.markMines = 0;
-        this.usesl = sw ?? this.usesl;
+        this.usesl = sl ?? this.usesl;
+        this.usems = JSON.parse(localStorage.getItem("isUseMs")) ?? this.usems;
         this.wMark = 0;
         this.lMark = 0;
         this.openCells = 0;
@@ -440,12 +441,12 @@ Sweep.prototype = {
             this.cells = cells;
         } else if (this.lv == "自定义" || this.lv == "铺满") {
             this.initCells();
-            //this.mines = this.max;
+            this.mines = this.max;
             this.setMines();
             this.setFigures();
         } else {
             this.initCells();
-            //this.mines = this.getRandom(this.min, this.max);
+            this.mines = this.getRandom(this.min, this.max);
             this.setMines();
             this.setFigures();
         }
@@ -454,8 +455,24 @@ Sweep.prototype = {
 }
 $(() => {
     var myContainer = $("#lattice"),
-        ls = ["isQm","isLocalGameData","isColor","isEnbleReset"],
         levels = document.querySelectorAll('.radio-btn'), t, s;
+        
+    function usems() {
+        if (Mine.usems === 1) {
+            t = setInterval(function () {
+                $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
+            }, 100);
+        } else if (Mine.usems === 2) {
+            t = setInterval(function () {
+                $("#second").text((parseFloat($("#second").text()) + 0.01).toFixed(2));
+            }, 10);
+        } else {
+            t = setInterval(function () {
+                s++;
+                $("#second").text(s);
+            }, 1000);
+        }
+    }
 
     function go(r) {
         if (Mine == null || Mine == undefined) {
@@ -469,22 +486,8 @@ $(() => {
         s = 0;
         if (r) Mine.play(true, true, Mine.cells);
         else Mine.play();
-        //$("#minecount").text(Mine.mines);
-        /*
-        t = setInterval(function () {
-            s++;
-            $("#second").text(s);
-        }, 1000);
-        */
-        if (Mine.usems) {
-            t = setInterval(function () {
-                $("#second").text((parseFloat($("#second").text()) + 0.01).toFixed(2));
-            }, 10);
-        } else {
-            t = setInterval(function () {
-                $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
-            }, 100);
-        }
+        $("#minecount").text(Mine.mines);
+        usems();
     }
 
     function init(lv, Container, row, col, min, max) {
@@ -504,11 +507,11 @@ $(() => {
             }
         }
     }
-    
+
     $("#start").click(() => {
         go();
     });
-    
+
     $("#restart").click(() => {
         go(1);
     });
@@ -525,43 +528,47 @@ $(() => {
         } else if (!Mine.playing) {
             alert("游戏已结束或者未开始！");
         } else {
-            if (Mine.usems) {
-                t = setInterval(function () {
-                    Mine.pause = false;
-                    $("#second").text((parseFloat($("#second").text()) + 0.01).toFixed(2));
-                    Mine.mouseCellsShow(1);
-                    $("#stoped").val("暂停游戏");
-                }, 10);
-            } else {
-                t = setInterval(function () {
-                    Mine.pause = false;
-                    $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
-                    Mine.mouseCellsShow(1);
-                    $("#stoped").val("暂停游戏");
-                }, 100);
-            }
-
+            Mine.pause = false;
+            Mine.mouseCellsShow(1);
+            $("#stoped").val("暂停游戏");
+            usems();
         }
     });
-    
-    $("#light").click(()=>{
+
+    $("#night").click(() => {
         $("body").toggleClass("black");
         $("#topbaner").toggleClass("black");
-    })
+    });
+    
+    $("#skin").change(function() {
+        // 检查checkbox是否被选中  
+        if ($(this).is(':checked')) {
+            $('#alternate').prop('disabled', false);  
+        } else {
+            $('#alternate').prop('disabled', true);
+        }  
+    });
+
+    const ls = {
+        isColor: true,
+        isEnbleReset: true,
+        isLocalGameData: false,
+        isQm: false,
+        isUseMs: -1
+    };
+
+    let row, col, min, max;
 
     if (Mine == null) {
-        for (const i of ls) {
-            if (!localStorage.getItem(i)) {
-                localStorage.setItem(i, true)
+        for (const key in ls) {
+            if (!localStorage.getItem(key)) {
+                localStorage.setItem(key, ls[key]);
             }
         }
-        //console.log(levels[0]);
         levels[0].classList.add('selected');
-        let min = 5,
-            max = min + Math.ceil((min * min * 0.1));
-        init("初级", myContainer, min, min, min, max);
-        Mine.mines = Mine.getRandom(min, max);
-        $("#minecount").text(Mine.mines);
+        row = 5;
+        max = row + Math.ceil((row * row * 0.1));
+        init("初级", myContainer, row, row, row, max);
     }
 
     levels.forEach(function (btn, index) {
@@ -579,29 +586,22 @@ $(() => {
             this.classList.add('selected');
             if (this.classList.contains("selected")) {
                 if (this.value == "自定义") {
-                    let row = prompt("请输入行数：");
+                    row = prompt("请输入行数：");
                     if (row) {
-                        let col = prompt("请输入列数："),
-                            mines = parseInt(prompt("请输入雷数："));
-                        init(this.value, myContainer, row, col, 0, mines);
-                        Mine.mines = mines;
-                        $("#minecount").text(mines);
+                        col = prompt("请输入列数：");
+                        max = parseInt(prompt("请输入雷数："));
+                        init(this.value, myContainer, row, col, 0, max);
                     }
                 } else if (this.value == "铺满") {
-                    let row = Math.floor(document.documentElement.clientHeight / 42),
-                        col = Math.floor(document.documentElement.clientWidth / 33),
-                        mines = row + Math.ceil((row * col * 0.1));
-                    init(this.value, myContainer, row, col, 0, mines);
-                    Mine.mines = mines;
-                    $("#minecount").text(mines);
+                    row = Math.floor(document.documentElement.clientHeight / 42);
+                    col = Math.floor(document.documentElement.clientWidth / 33);
+                    max = row + Math.ceil((row * col * 0.1));
+                    init(this.value, myContainer, row, col, 0, max);
                 } else {
-                    let min = parseInt(this.dataset.value),
-                        max = min + Math.ceil((min * min * 0.1));
+                    min = parseInt(this.dataset.value);
+                    max = min + Math.ceil((min * min * 0.1));
                     init(this.value, myContainer, min, min, min, max);
-                    Mine.mines = Mine.getRandom(min, max);
-                    $("#minecount").text(Mine.mines);
                 }
-                Mine
                 console.clear();
             }
             //console.log(index);
