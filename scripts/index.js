@@ -456,7 +456,7 @@ Sweep.prototype = {
 $(() => {
     var myContainer = $("#lattice"),
         levels = document.querySelectorAll('.radio-btn'), t, s;
-        
+
     function usems() {
         if (Mine.usems === 1) {
             t = setInterval(function () {
@@ -539,14 +539,10 @@ $(() => {
         $("body").toggleClass("black");
         $("#topbaner").toggleClass("black");
     });
-    
-    $("#skin").change(function() {
-        // 检查checkbox是否被选中  
-        if ($(this).is(':checked')) {
-            $('#alternate').prop('disabled', false);  
-        } else {
-            $('#alternate').prop('disabled', true);
-        }  
+
+    $('#theme-selector').change(function () {
+        var selectedTheme = $(this).val();
+        $('#theme-link').attr('href', selectedTheme);
     });
 
     const ls = {

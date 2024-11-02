@@ -1,0 +1,14 @@
+#lattice td.flagOk {
+    background: url("../../images/skin/one/Ok.png") no-repeat center;
+}
+
+#lattice td.mine {
+    background: url("../../images/skin/one/mine.png") no-repeat center;
+}
+
+#lattice td.mine2 {
+    background: #500c0c url("../../images/skin/one/mine2.png") no-repeat center;
+}
+html,input,label,table,tr,td,select,option{
+    cursor: url('../../images/skin/one/cursor.png'),auto; /* 首先尝试加载自定义图片，如果失败则使用默认光标 */
+}

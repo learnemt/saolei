@@ -7,12 +7,15 @@
     <title>扫雷</title>
     <link href="css/index.css" rel="stylesheet" />
     <link rel="shortcut icon" href="../sweep/images/logo/logo.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="css/skin.css" id="alternate" disabled>
-<script>
-    function openWin(){
-            window.open('/sweep/help.html','_blank','left=350,top=100,toolbar=yes,location=0,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=no,copyhistory=yes,width=800,height=600');
+    <link rel="stylesheet" href="" id="theme-link">
+    <script>
+        function openWin() {
+            window.open('/help.html', '_blank', 'left=350,top=100,toolbar=yes,location=0,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=no,copyhistory=yes,width=800,height=600');
         }
-</script>
+        function closenav() {
+            document.getElementsByTagName("header")[0].style.display = 'none';
+        }
+    </script>
 </head>
 
 <body>
@@ -24,6 +27,8 @@
             <nav class="nav-menu">
                 <ul>
                     <li><a href="/">首页</a></li>
+                    <li><a onclick="openWin();">帮助</a></li>
+                    <li><a onclick="closenav();">隐藏</a></li>
                     <!-- <li><a href="#features">功能</a></li>
                     <li><a href="#pricing">定价</a></li>
                     <li><a href="#contact">联系我们</a></li> -->
@@ -56,18 +61,20 @@
                 <input type="button" id="restart" value="重新开始" />
                 <input type="button" id="stoped" value="暂停游戏" />
                 <!-- <input type="button" id="setting" value="   设 置   " /> -->
-                
             </div>
             <div>
                 <label for="night">夜间
                     <input type="checkbox" name="night" id="night">
                 </label>
-                <label for="skin">切换主题
-                    <input type="checkbox" name="skin" id="skin">
-                </label>
-                <label for="help">
+                <select name="" id="theme-selector">
+                    <option value="" title="默认主题">默认</option>
+                    <option value="css/skin/one.css">土豆雷</option>
+                    <option value="css/skin/two.css">打地鼠</option>
+                </select>
+                
+                <!-- <label for="help">
                     <strong onclick="openWin();">帮助</strong>
-                </label>
+                </label> -->
             </div>
         </div>
         <div id="game_box">

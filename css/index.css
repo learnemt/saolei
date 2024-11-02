@@ -27,6 +27,7 @@ header {
 
 .nav-menu li {
     margin-left: 1em;
+    cursor: pointer;
 }
 
 .nav-menu a {
@@ -64,13 +65,13 @@ header {
     cursor: pointer;
 }
 
-ul{
+ul {
     padding: 0;
     margin: 0 auto;
     list-style: none;
 }
 
-#popup{
+#popup {
     position: absolute;
     width: 20px;
     display: block;
@@ -91,18 +92,21 @@ ul{
     margin-left: 20px;
     margin-right: 20px;
 }
-.black{
+
+.black {
     color: white;
     background-color: black;
 }
-#start{
+
+#start {
     background: url("../images/buttons/bt1.jpg") no-repeat center;
 }
 
-#restart{
+#restart {
     background: url("../images/buttons/bt2.jpg") no-repeat center;
     color: white;
 }
+
 .radio-btn {
     /* 你的样式 */
     border: 0 solid white;
