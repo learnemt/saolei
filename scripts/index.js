@@ -390,12 +390,8 @@ Sweep.prototype = {
         console.groupEnd("对局数据");
         console.log(`${msg}！目前胜率为：${this.rate}%\n本局雷数：${this.mines}个，所用时间：${this.$("second").innerText}秒\n成功标记：${this.wMark}枚，标错数量：${this.lMark}枚\n标了${this.markMines}枚，还剩${this.mines - this.markMines}枚。赢${this.winSeesion}次，输${this.loseSeesion}次`);
         console.groupEnd();
-        if (this.onReset != null && !isWin && JSON.parse(localStorage.getItem("isEnbleReset"))) {
-            this.onReset();
-        }
-        if(confirm(`${msg}！再来一局？`)){
-            this.play();
-            this.$("minecount").innerText = this.mines;
+        if (this.onReset != null && JSON.parse(localStorage.getItem("isEnbleReset"))) {
+            this.onReset(msg);
         }
     },
     overView() {
@@ -438,6 +434,14 @@ $(() => {
         isUseMs: -1
     };
 
+    function showModal(title, content, showConfirmButton) {
+        $('#modal-title').text(title);
+        $('#modal-content').html(content);
+        $('#data-display').html(`<p>难度：${Mine.lv}，第${Mine.count}局，胜率：${Mine.rate}%</p>`)
+        $('#modal-confirm').toggle(showConfirmButton);
+        $('#overlay').fadeIn(300); // 淡入效果
+    }
+    
     function init(lv, Container, row, col, min, max) {
         Mine = new Sweep(lv, Container, row, col, min, max);
         $("#minecount").text("0")
@@ -465,10 +469,8 @@ $(() => {
                 }, 1000);
             }
         }
-        Mine.onReset = () => {
-            if (confirm("本局游戏已经结束，是否重新再来?")) {
-                go(1);
-            }
+        Mine.onReset = (msg) => {
+            showModal(`${msg}！`, '再来一局？', true);
         }
     }
 
@@ -483,6 +485,7 @@ $(() => {
         }
         if (r) Mine.play(true, true, Mine.cells);
         else Mine.play();
+        $("#minecount").text(Mine.mines);
     }
 
     if (Mine == null) {
@@ -538,6 +541,27 @@ $(() => {
                 console.clear();
             }
         });
+    });
+
+    // 隐藏弹窗的函数
+    function hideModal() {
+        $('#overlay').fadeOut(300); // 淡出效果
+    }
+    
+    // 绑定关闭按钮的点击事件
+    $('#modal-close').click(function() {
+        hideModal();
+    });
+
+    $('#modal-restart').click(function() {
+        go(1);
+        hideModal();
+    });
+
+    // 如果有确认按钮，也可以绑定它的点击事件
+    $('#modal-confirm').click(function() {
+        go();
+        hideModal();
     });
 
     $("#restart").click(() => {

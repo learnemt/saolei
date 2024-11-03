@@ -29,8 +29,8 @@
                     <li><a onclick="openWin();" title="扫雷帮助文档">帮助</a></li>
                     <li><a onclick="closenav();" title="隐藏导航栏">隐藏</a></li>
                     <li><a href="https://github.com/learnemt/sweep" title="repository"
-                        style="background: url('https://tse2-mm.cn.bing.net/th/id/OIP-C.GHB_xzlCcjJhbDrrRcxTEwAAAA?rs=1&pid=ImgDetMain&w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2') no-repeat center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
-                </li>
+                            style="background: url('https://tse2-mm.cn.bing.net/th/id/OIP-C.GHB_xzlCcjJhbDrrRcxTEwAAAA?rs=1&pid=ImgDetMain&w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2') no-repeat center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                    </li>
                 </ul>
             </nav>
         </header>
@@ -66,6 +66,32 @@
         <div id="game_box">
             <table id="lattice" class="custom-cursor">
             </table>
+        </div>
+    </div>
+    <!-- 弹窗背景遮罩层 -->
+    <div id="overlay" style="display: none;">
+        <!-- 弹窗框 -->
+        <div id="modal">
+            <!-- 弹窗标题 -->
+            <div id="modal-title">标题</div>
+            <!-- 弹窗内容容器 -->
+            <div id="modal-content-container">
+                <!-- 数据展示区域 -->
+                <p>数据内容示例</p>
+                <div id="data-display" class="modal-section">
+                    <!-- 数据展示的具体内容，例如表格或文本 -->
+                    <!-- 你可以在这里添加表格、图像或其他HTML元素 -->
+                </div>
+                <!-- 其他内容区域 -->
+                <div id="modal-content" class="modal-section">
+                </div>
+            </div>
+            <!-- 弹窗按钮 -->
+            <div id="modal-buttons">
+                <button id="modal-close">关闭</button>
+                <button id="modal-restart">重新开始</button>
+                <button id="modal-confirm" style="display: none;">再来一局</button>
+            </div>
         </div>
     </div>
     <script src="scripts/jq.js"></script>
