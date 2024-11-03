@@ -395,6 +395,7 @@ Sweep.prototype = {
         }
         if(confirm(`${msg}！再来一局？`)){
             this.play();
+            this.$("minecount").innerText = this.mines;
         }
     },
     overView() {
@@ -414,7 +415,7 @@ Sweep.prototype = {
         this.wMark = 0;
         this.lMark = 0;
         this.openCells = 0;
-        this.$("second").innerText = "0"
+        this.$("second").innerText = "0";
         this.hideAll();
         if (cells != null) {
             this.cells = cells;
@@ -494,7 +495,7 @@ $(() => {
         num = 5;
         max = num + Math.ceil((num * num * 0.1));
         init("初级", myContainer, num, num, num, max);
-        Mine.mines = max;
+        Mine.mines = Mine.getRandom(num, max);
         $("#minecount").text(Mine.mines);
         go();
     }
