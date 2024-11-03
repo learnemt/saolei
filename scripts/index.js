@@ -237,9 +237,6 @@ Sweep.prototype = {
                         if (e.button == 0) {//左键
                             var number = self.cells[row][col];
                             if ('ontouchstart' in document.documentElement) {
-                                if (self.onmarkMine != null) {
-                                    self.onmarkMine(self.mines - self.markMines);
-                                }
                                 if (this.className == "scaleIn") {
                                     if (self.markMines == self.mines) return;
                                     this.className = "redFlag";
@@ -247,6 +244,9 @@ Sweep.prototype = {
                                 } else {
                                     this.className = "scaleIn";
                                     self.markMines--;
+                                }
+                                if (self.onmarkMine != null) {
+                                    self.onmarkMine(self.mines - self.markMines);
                                 }
                             }
                             if (this.className == "redFlag" || this.className == "qm") {
