@@ -15,20 +15,19 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.onReset = null;
     this.playing = false;
     this.pause = false,
-        this.wMark = 0; //成功排雷数
+    this.wMark = 0; //成功排雷数
     this.lMark = 0; //失败排雷数
     this.gameState = {
         isWin: false,
         msg: "",
         states: ['EndPage', 'Playing', 'Win', 'Lost']
     }
-    this.rate = 0; //胜率
-    this.count = 0; //场次
+    this.rate = 0;
+    this.count = 0;
     this.winSeesion = 0;
     this.loseSeesion = 0;
     this.usems = -1;
     this.usesl = false;
-    this.usetc = true;
 }
 Sweep.prototype = {
     constructor: Sweep,
@@ -382,7 +381,7 @@ Sweep.prototype = {
             } var storedObject = localStorage.getItem(key);
             if (storedObject) {
                 var data = JSON.parse(storedObject);
-                var ta = [isWin, this.mines, this.$("second").innerText, this.formatDate(), this.cells];
+                var ta = [this.lv, isWin, this.rows, this.cols, this.mines, this.$("second").innerText, this.formatDate(), this.cells];
                 switch (this.lv) {
                     case "初级":
                         data.level0.push(ta);
@@ -439,14 +438,8 @@ Sweep.prototype = {
         this.hideAll();
         if (cells != null) {
             this.cells = cells;
-        } else if (this.lv == "自定义" || this.lv == "铺满") {
+        }else {
             this.initCells();
-            this.mines = this.max;
-            this.setMines();
-            this.setFigures();
-        } else {
-            this.initCells();
-            this.mines = this.getRandom(this.min, this.max);
             this.setMines();
             this.setFigures();
         }
@@ -486,7 +479,6 @@ $(() => {
         s = 0;
         if (r) Mine.play(true, true, Mine.cells);
         else Mine.play();
-        $("#minecount").text(Mine.mines);
         usems();
     }
 
@@ -562,9 +554,11 @@ $(() => {
             }
         }
         levels[0].classList.add('selected');
-        row = 5;
-        max = row + Math.ceil((row * row * 0.1));
-        init("初级", myContainer, row, row, row, max);
+        num = 5;
+        max = num + Math.ceil((num * num * 0.1));
+        init("初级", myContainer, num, num, num, max);
+        Mine.mines = max;
+        $("#minecount").text(Mine.mines);
     }
 
     levels.forEach(function (btn, index) {
@@ -578,7 +572,6 @@ $(() => {
             levels.forEach(function (otherBtn) {
                 otherBtn.classList.remove('selected');
             });
-            // 设置当前按钮为“选中”状态
             this.classList.add('selected');
             if (this.classList.contains("selected")) {
                 if (this.value == "自定义") {
@@ -587,20 +580,23 @@ $(() => {
                         col = prompt("请输入列数：");
                         max = parseInt(prompt("请输入雷数："));
                         init(this.value, myContainer, row, col, 0, max);
+                        Mine.mines = max;
                     }
                 } else if (this.value == "铺满") {
                     row = Math.floor(document.documentElement.clientHeight / 42);
                     col = Math.floor(document.documentElement.clientWidth / 33);
                     max = row + Math.ceil((row * col * 0.1));
                     init(this.value, myContainer, row, col, 0, max);
+                    Mine.mines = max;
                 } else {
                     min = parseInt(this.dataset.value);
                     max = min + Math.ceil((min * min * 0.1));
                     init(this.value, myContainer, min, min, min, max);
+                    Mine.mines = Mine.getRandom(min, max);
                 }
+                $("#minecount").text(Mine.mines);
                 console.clear();
             }
-            //console.log(index);
         });
     });
 
