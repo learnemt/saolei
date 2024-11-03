@@ -13,9 +13,10 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.onmarkMine = null; //标记地雷操作的回调函数
     this.onGameOver = null; //准备游戏结束时的回调函数
     this.onReset = null;
+    this.onUsems = null;
     this.playing = false;
     this.pause = false,
-    this.wMark = 0; //成功排雷数
+        this.wMark = 0; //成功排雷数
     this.lMark = 0; //失败排雷数
     this.gameState = {
         isWin: false,
@@ -236,6 +237,9 @@ Sweep.prototype = {
                         if (e.button == 0) {//左键
                             var number = self.cells[row][col];
                             if ('ontouchstart' in document.documentElement) {
+                                if (self.onmarkMine != null) {
+                                    self.onmarkMine(self.mines - self.markMines);
+                                }
                                 if (this.className == "scaleIn") {
                                     if (self.markMines == self.mines) return;
                                     this.className = "redFlag";
@@ -243,57 +247,32 @@ Sweep.prototype = {
                                 } else {
                                     this.className = "scaleIn";
                                     self.markMines--;
-                                    if (number == 9) {
-                                        num += 1;
-                                        if (num == 1 && !reset) {
-                                            alert(`这把第${num}次点雷，为了你的体验，已更新对局...`);
-                                            while (self.cells[row][col] == 9) {
-                                                self.initCells();
-                                                self.setMines();
-                                                self.setFigures();
-                                            }
-                                            self.openNumbercells(row, col, self.cells[row][col]);
-                                            //num = 0;
-                                        } else {
-                                            this.className = "fail"
-                                            self.winInfo(false, '你输了');
-                                        }
-
-                                    } else {
-                                        num += 1;
-                                        self.openNumbercells(row, col, number);
-                                    }
                                 }
-                                if (self.onmarkMine != null) {
-                                    self.onmarkMine(self.mines - self.markMines);
-                                }
-                            } else {
-                                if (this.className == "redFlag" || this.className == "qm") {
-                                    return;
-                                }
-                                if (number == 9) {
-                                    num += 1;
-                                    if (num == 1 && !reset) {
-                                        alert(`这把第${num}次点雷，为了你的体验，已更新对局...`);
+                            }
+                            if (this.className == "redFlag" || this.className == "qm") {
+                                return;
+                            }
+                            if (number == 9) {
+                                num += 1;
+                                if (num == 1 && !reset) {
+                                    alert(`这把第${num}次点雷，为了你的体验，已更新对局...`);
+                                    while (self.cells[row][col] == 9) {
                                         self.initCells();
                                         self.setMines();
                                         self.setFigures();
-                                        while (self.cells[row][col] == 9) {
-                                            self.initCells();
-                                            self.setMines();
-                                            self.setFigures();
-                                        }
-                                        self.openNumbercells(row, col, self.cells[row][col]);
-                                        //num = 0;
-                                    } else {
-                                        this.className = "fail"
-                                        self.winInfo(false, '你输了');
                                     }
-
+                                    self.openNumbercells(row, col, self.cells[row][col]);
+                                    //num = 0;
                                 } else {
-                                    num += 1;
-                                    self.openNumbercells(row, col, number);
+                                    this.className = "fail"
+                                    self.winInfo(false, '你输了');
                                 }
+                            } else {
+                                num += 1;
+                                self.openNumbercells(row, col, number);
+                            }
+                            if(num ==1){
+                                self.onUsems();
                             }
                         } else if (e.button == 2) {
                             if (this.className == "scaleIn") {
@@ -366,7 +345,6 @@ Sweep.prototype = {
         else return `${year}-${month}-${day}`;
     },
     winInfo: function (isWin, msg = '') {
-        alert(msg);
         if (isWin) this.winSeesion++;
         else this.loseSeesion++;
         if (this.onGameOver != null) {
@@ -397,7 +375,6 @@ Sweep.prototype = {
                         break;
                 }
                 localStorage.setItem(key, JSON.stringify(data));
-                //xzconsole.log(data);
             }
         }
         this.playing = false;
@@ -415,6 +392,9 @@ Sweep.prototype = {
         console.groupEnd();
         if (this.onReset != null && !isWin && JSON.parse(localStorage.getItem("isEnbleReset"))) {
             this.onReset();
+        }
+        if(confirm(`${msg}！再来一局？`)){
+            this.play();
         }
     },
     overView() {
@@ -438,7 +418,7 @@ Sweep.prototype = {
         this.hideAll();
         if (cells != null) {
             this.cells = cells;
-        }else {
+        } else {
             this.initCells();
             this.setMines();
             this.setFigures();
@@ -448,39 +428,14 @@ Sweep.prototype = {
 }
 $(() => {
     var myContainer = $("#lattice"),
-        levels = document.querySelectorAll('.radio-btn'), t, s;
-
-    function usems() {
-        if (Mine.usems === 1) {
-            t = setInterval(function () {
-                $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
-            }, 100);
-        } else if (Mine.usems === 2) {
-            t = setInterval(function () {
-                $("#second").text((parseFloat($("#second").text()) + 0.01).toFixed(2));
-            }, 10);
-        } else {
-            t = setInterval(function () {
-                s++;
-                $("#second").text(s);
-            }, 1000);
-        }
-    }
-
-    function go(r) {
-        if (Mine == null || Mine == undefined) {
-            alert("请先选择难度级别再开始！");
-            return false;
-        }
-        if (Mine && Mine.playing) {
-            alert("本局游戏尚未结束！");
-            return false;
-        }
-        s = 0;
-        if (r) Mine.play(true, true, Mine.cells);
-        else Mine.play();
-        usems();
-    }
+        levels = document.querySelectorAll('.radio-btn'), t, s=0, row, col, min, max;
+    const ls = {
+        isColor: true,
+        isEnbleReset: true,
+        isLocalGameData: false,
+        isQm: false,
+        isUseMs: -1
+    };
 
     function init(lv, Container, row, col, min, max) {
         Mine = new Sweep(lv, Container, row, col, min, max);
@@ -493,6 +448,22 @@ $(() => {
         Mine.onGameOver = function () {
             clearInterval(t);
         }
+        Mine.onUsems = function () {
+            if (Mine.usems === 1) {
+                t = setInterval(function () {
+                    $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
+                }, 100);
+            } else if (Mine.usems === 2) {
+                t = setInterval(function () {
+                    $("#second").text((parseFloat($("#second").text()) + 0.01).toFixed(2));
+                }, 10);
+            } else {
+                t = setInterval(function () {
+                    s++;
+                    $("#second").text(s);
+                }, 1000);
+            }
+        }
         Mine.onReset = () => {
             if (confirm("本局游戏已经结束，是否重新再来?")) {
                 go(1);
@@ -500,8 +471,72 @@ $(() => {
         }
     }
 
-    $("#start").click(() => {
+    function go(r) {
+        if (Mine == null || Mine == undefined) {
+            alert("请先选择难度级别再开始！");
+            return false;
+        }
+        if (Mine && Mine.playing) {
+            alert("本局游戏尚未结束！");
+            return false;
+        }
+        if (r) Mine.play(true, true, Mine.cells);
+        else Mine.play();
+    }
+
+    if (Mine == null) {
+        for (const key in ls) {
+            if (!localStorage.getItem(key)) {
+                localStorage.setItem(key, ls[key]);
+            }
+        }
+        levels[0].classList.add('selected');
+        num = 5;
+        max = num + Math.ceil((num * num * 0.1));
+        init("初级", myContainer, num, num, num, max);
+        Mine.mines = max;
+        $("#minecount").text(Mine.mines);
         go();
+    }
+
+    levels.forEach(function (btn, index) {
+        let c = ["green", "blue", "orange", "red"]
+        btn.style.color = c[index];
+        btn.addEventListener('click', function () {
+            if (Mine && Mine.playing) {
+                alert("游戏还在进行，不能切换！");
+                return;
+            }
+            levels.forEach(function (otherBtn) {
+                otherBtn.classList.remove('selected');
+            });
+            this.classList.add('selected');
+            if (this.classList.contains("selected")) {
+                if (this.value == "自定义") {
+                    row = prompt("请输入行数：");
+                    col = prompt("请输入列数：");
+                    max = parseInt(prompt("请输入雷数："));
+                    if (row && col && max) {
+                        init(this.value, myContainer, row, col, 0, max);
+                        Mine.mines = max;
+                    }
+                } else if (this.value == "铺满") {
+                    row = Math.floor(document.documentElement.clientHeight / 42);
+                    col = Math.floor(document.documentElement.clientWidth / 33);
+                    max = row + Math.ceil((row * col * 0.1));
+                    init(this.value, myContainer, row, col, 0, max);
+                    Mine.mines = max;
+                } else {
+                    min = parseInt(this.dataset.value);
+                    max = min + Math.ceil((min * min * 0.1));
+                    init(this.value, myContainer, min, min, min, max);
+                    Mine.mines = Mine.getRandom(min, max);
+                }
+                $("#minecount").text(Mine.mines);
+                go();
+                console.clear();
+            }
+        });
     });
 
     $("#restart").click(() => {
@@ -523,7 +558,7 @@ $(() => {
             Mine.pause = false;
             Mine.mouseCellsShow(1);
             $("#stoped").val("暂停游戏");
-            usems();
+            Mine.onUsems();
         }
     });
 
@@ -535,69 +570,6 @@ $(() => {
     $('#theme-selector').change(function () {
         var selectedTheme = $(this).val();
         $('#theme-link').attr('href', selectedTheme);
-    });
-
-    const ls = {
-        isColor: true,
-        isEnbleReset: true,
-        isLocalGameData: false,
-        isQm: false,
-        isUseMs: -1
-    };
-
-    let row, col, min, max;
-
-    if (Mine == null) {
-        for (const key in ls) {
-            if (!localStorage.getItem(key)) {
-                localStorage.setItem(key, ls[key]);
-            }
-        }
-        levels[0].classList.add('selected');
-        num = 5;
-        max = num + Math.ceil((num * num * 0.1));
-        init("初级", myContainer, num, num, num, max);
-        Mine.mines = max;
-        $("#minecount").text(Mine.mines);
-    }
-
-    levels.forEach(function (btn, index) {
-        let c = ["green", "blue", "orange", "red"]
-        btn.style.color = c[index];
-        btn.addEventListener('click', function () {
-            if (Mine && Mine.playing) {
-                alert("游戏还在进行，不能切换！");
-                return;
-            }
-            levels.forEach(function (otherBtn) {
-                otherBtn.classList.remove('selected');
-            });
-            this.classList.add('selected');
-            if (this.classList.contains("selected")) {
-                if (this.value == "自定义") {
-                    row = prompt("请输入行数：");
-                    if (row) {
-                        col = prompt("请输入列数：");
-                        max = parseInt(prompt("请输入雷数："));
-                        init(this.value, myContainer, row, col, 0, max);
-                        Mine.mines = max;
-                    }
-                } else if (this.value == "铺满") {
-                    row = Math.floor(document.documentElement.clientHeight / 42);
-                    col = Math.floor(document.documentElement.clientWidth / 33);
-                    max = row + Math.ceil((row * col * 0.1));
-                    init(this.value, myContainer, row, col, 0, max);
-                    Mine.mines = max;
-                } else {
-                    min = parseInt(this.dataset.value);
-                    max = min + Math.ceil((min * min * 0.1));
-                    init(this.value, myContainer, min, min, min, max);
-                    Mine.mines = Mine.getRandom(min, max);
-                }
-                $("#minecount").text(Mine.mines);
-                console.clear();
-            }
-        });
     });
 
     myContainer.contextmenu(() => {
