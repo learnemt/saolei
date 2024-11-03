@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="" id="theme-link">
     <script>
         function openWin() {
-            window.open('/help.html', '_blank', 'left=350,top=100,toolbar=yes,location=0,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=no,copyhistory=yes,width=800,height=600');
+            window.open('/sweep/help.html', '_blank', 'left=350,top=100,toolbar=yes,location=0,directories=no,status=no,menubar=yes,scrollbars=yes,resizable=no,copyhistory=yes,width=800,height=600');
         }
         function closenav() {
             document.getElementsByTagName("header")[0].style.display = 'none';
@@ -22,25 +22,17 @@
     <div id="app">
         <header>
             <div class="logo">
-                <a href="/"><img src="logo.png" alt="软件Logo"></a>
+                <a href="https://learnemt.github.io/sweep/"><img src="logo.png" alt="软件Logo"></a>
             </div>
             <nav class="nav-menu">
                 <ul>
-                    <li><a href="/">首页</a></li>
+                    <li><a href="https://github.com/learnemt/sweep"
+                            style="background: url('https://tse2-mm.cn.bing.net/th/id/OIP-C.GHB_xzlCcjJhbDrrRcxTEwAAAA?rs=1&pid=ImgDetMain&w=32&h=32&qlt=90&pcl=fffffa&o=6&pid=1.2') no-repeat center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                    </li>
                     <li><a onclick="openWin();">帮助</a></li>
                     <li><a onclick="closenav();">隐藏</a></li>
-                    <!-- <li><a href="#features">功能</a></li>
-                    <li><a href="#pricing">定价</a></li>
-                    <li><a href="#contact">联系我们</a></li> -->
                 </ul>
             </nav>
-            <!-- <div class="header-right">
-                <div class="search-box">
-                    <input type="text" placeholder="搜索...">
-                    <button>搜索</button>
-                </div>
-                <button>下载软件</button>
-            </div> -->
         </header>
         <div id="popup">
             <input class="radio-btn" type="button" value="初级" title="5*5" data-value="5">
@@ -60,7 +52,6 @@
                 <input type="button" id="start" value="开始游戏" />
                 <input type="button" id="restart" value="重新开始" />
                 <input type="button" id="stoped" value="暂停游戏" />
-                <!-- <input type="button" id="setting" value="   设 置   " /> -->
             </div>
             <div>
                 <label for="night">夜间
@@ -71,10 +62,6 @@
                     <option value="css/skin/one.css">土豆雷</option>
                     <option value="css/skin/two.css">打地鼠</option>
                 </select>
-                
-                <!-- <label for="help">
-                    <strong onclick="openWin();">帮助</strong>
-                </label> -->
             </div>
         </div>
         <div id="game_box">
