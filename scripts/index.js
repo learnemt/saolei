@@ -202,22 +202,21 @@ Sweep.prototype = {
         }
     },
     hideAll: function () {
-        // 为每行添加渐入动画  
-        var delay = 50; // 初始延迟 
+        // 为每行添加渐入动画
+        var delay = 50; // 初始延迟
         for (var i = 0; i < this.rows; i++) {
-            // 设置setTimeout的延迟，以实现逐行效果  
+            // 设置setTimeout的延迟，以实现逐行效果
             setTimeout(function (row) {
                 return function () {
-                    // 选择当前行的所有td并添加fadeIn类以触发动画  
+                    // 选择当前行的所有td并添加fadeIn类以触发动画
                     var tds = document.querySelectorAll('#lattice tr:nth-child(' + (row + 1) + ') td');
                     tds.forEach(function (td) {
                         td.classList.add('scaleIn');
                     });
                 };
             }(i), delay);
-
-            // 为下一行增加延迟  
-            delay += 100; // 例如，每行之间延迟500毫秒  
+            // 为下一行增加延迟
+            delay += 100; // 例如，每行之间延迟500毫秒
             for (var j = 0; j < this.cols; j++) {
                 var td = this.$("mine_" + i + "_" + j);
                 td.style.color = "";
@@ -562,6 +561,10 @@ $(() => {
         hideModal();
     });
 
+    $("#start").click(() => {
+        go();
+    });
+    
     $("#restart").click(() => {
         go(1);
     });
