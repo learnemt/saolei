@@ -15,8 +15,8 @@ function Sweep(lv, Container, rows, cols, min, max) {
     this.onReset = null;
     this.onUsems = null;
     this.playing = false;
-    this.pause = false,
-        this.wMark = 0; //成功排雷数
+    this.pause = false;
+    this.wMark = 0; //成功排雷数
     this.lMark = 0; //失败排雷数
     this.gameState = {
         isWin: false,
@@ -271,7 +271,7 @@ Sweep.prototype = {
                                 num += 1;
                                 self.openNumbercells(row, col, number);
                             }
-                            if(num ==1){
+                            if (num == 1) {
                                 self.onUsems();
                             }
                         } else if (e.button == 2) {
@@ -425,7 +425,7 @@ Sweep.prototype = {
 }
 $(() => {
     var myContainer = $("#lattice"),
-        levels = document.querySelectorAll('.radio-btn'), t, s=0, row, col, min, max;
+        levels = document.querySelectorAll('.radio-btn'), t, s, row, col, min, max;
     const ls = {
         isColor: true,
         isEnbleReset: true,
@@ -441,7 +441,11 @@ $(() => {
         $('#modal-confirm').toggle(showConfirmButton);
         $('#overlay').fadeIn(300); // 淡入效果
     }
-    
+
+    function hideModal() {
+        $('#overlay').fadeOut(300); // 淡出效果
+    }
+
     function init(lv, Container, row, col, min, max) {
         Mine = new Sweep(lv, Container, row, col, min, max);
         $("#minecount").text("0")
@@ -454,6 +458,7 @@ $(() => {
             clearInterval(t);
         }
         Mine.onUsems = function () {
+            s = 0;
             if (Mine.usems === 1) {
                 t = setInterval(function () {
                     $("#second").text((parseFloat($("#second").text()) + 0.1).toFixed(1));
@@ -525,7 +530,7 @@ $(() => {
                         Mine.mines = max;
                     }
                 } else if (this.value == "铺满") {
-                    row = Math.floor(document.documentElement.clientHeight / 42);
+                    row = Math.floor(document.documentElement.clientHeight / 39);
                     col = Math.floor(document.documentElement.clientWidth / 33);
                     max = row + Math.ceil((row * col * 0.1));
                     init(this.value, myContainer, row, col, 0, max);
@@ -543,23 +548,16 @@ $(() => {
         });
     });
 
-    // 隐藏弹窗的函数
-    function hideModal() {
-        $('#overlay').fadeOut(300); // 淡出效果
-    }
-    
-    // 绑定关闭按钮的点击事件
-    $('#modal-close').click(function() {
+    $('#modal-close').click(function () {
         hideModal();
     });
 
-    $('#modal-restart').click(function() {
+    $('#modal-restart').click(function () {
         go(1);
         hideModal();
     });
 
-    // 如果有确认按钮，也可以绑定它的点击事件
-    $('#modal-confirm').click(function() {
+    $('#modal-confirm').click(function () {
         go();
         hideModal();
     });
