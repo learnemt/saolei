@@ -435,8 +435,15 @@ $(() => {
 
     function showModal(title, content, showConfirmButton) {
         $('#modal-title').text(title);
+        $('#modal-content-title').html(`
+        难度：${Mine.lv}，第${Mine.count}局，胜率：${Mine.rate}%`
+        );
         $('#modal-content').html(content);
-        $('#data-display').html(`<p>难度：${Mine.lv}，第${Mine.count}局，胜率：${Mine.rate}%</p>`)
+        $('#data-display').html(`<p>
+        地雷：${Mine.mines}个，时间：${Mine.$("second").innerText}秒
+        </p>
+        <p>赢：${Mine.winSeesion}局，输：${Mine.loseSeesion}局</p>`
+        )
         $('#modal-confirm').toggle(showConfirmButton);
         $('#overlay').fadeIn(300); // 淡入效果
     }
@@ -564,7 +571,7 @@ $(() => {
     $("#start").click(() => {
         go();
     });
-    
+
     $("#restart").click(() => {
         go(1);
     });
@@ -590,7 +597,6 @@ $(() => {
 
     $("#night").click(() => {
         $("body").toggleClass("black");
-        $("#topbaner").toggleClass("black");
     });
 
     $('#theme-selector').change(function () {
